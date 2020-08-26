@@ -6,9 +6,9 @@ Python version: 3.7.2
 ## Prerequisites
 Ensure VirtualEnv is Installed : `pip install virtualenv`
 Ensure Django is Installed: `pip install Django`
-```javascript
-var s = "JavaScript syntax highlighting";
-alert(s);
+```python
+import django
+django.__version__.
 ```
 
 ## Set Up
