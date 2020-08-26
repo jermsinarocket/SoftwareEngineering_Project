@@ -6,7 +6,14 @@ Django version: 3.1
 
 ## Prerequisites
 - Ensure VirtualEnv is Installed : `pip install virtualenv`
-- Ensure Django is Installed: `pip install Django`
+
+## Set Up
+- change directory to 'SEProject': `cd SEProject`
+- create a new virtual environment: `virtualenv env`
+- activate the virtual environment: `env\Scripts\activate`
+- update pip and setuptools to latest version: `python -m pip install --upgrade pip setuptools`
+- install dependencies: `pip install -r requirements.txt`
+- once done, you can deactivate the virtual environment: `env\bin\deactivate`
 
 ## Verifying Modules Installation
 - To verify that Django can be seen by Python, type python from your shell. Then at the Python prompt, try to import Django:
@@ -15,15 +22,7 @@ import django
 django.__version__
 ```
 
-## Set Up
-- change directory to 'ImageProcessingServer': `cd ImageProcessingServer`
-- create a new virtual environment: `virtualenv env`(or `virtualenv venv --python=python3.7.2` if your python version is different)
-- activate the virtual environment: `env\Scripts\activate`
-- update pip and setuptools to latest version: `python -m pip install --upgrade pip setuptools`
-- install dependencies: `pip install -r requirements.txt`
-- once done, you can deactivate the virtual environment: `env\bin\deactivate`
-
 ## Initializing the Server
-- change directory to 'ImageProcessingServer\app': cd `ImageProcessingServer\app`
-- run the server: `python main.py` (or `python -m main`)
+- change directory to 'tempproject': cd `tempproject`
+- run the server: `python manage.py runserver`
 - once done, you can deactivate the virtual environment: `env\bin\deactivate`
