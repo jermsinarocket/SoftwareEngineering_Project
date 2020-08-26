@@ -1,15 +1,18 @@
 # CZ2006 Software Engineering Project
 
 # Image Processing Server 
-Python version: 3.7.2
+Python version: 3.5 & above
 Django version: 3.1
+
 ## Prerequisites
 - Ensure VirtualEnv is Installed : `pip install virtualenv`
 - Ensure Django is Installed: `pip install Django`
-⋅⋅⋅Verify Django Installation
+
+## Verifying Modules Installation
+- To verify that Django can be seen by Python, type python from your shell. Then at the Python prompt, try to import Django:
 ```python
 import django
-django.__version__.
+django.__version__
 ```
 
 ## Set Up
