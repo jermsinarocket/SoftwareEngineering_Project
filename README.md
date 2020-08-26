@@ -1,2 +1,2 @@
-# CZ2006 SoftwareEngineering Project
+# CZ2006 Software Engineering Project
 
