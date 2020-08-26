@@ -2,10 +2,11 @@
 
 # Image Processing Server 
 Python version: 3.7.2
-
+Django version: 3.1
 ## Prerequisites
 - Ensure VirtualEnv is Installed : `pip install virtualenv`
 - Ensure Django is Installed: `pip install Django`
+⋅⋅⋅Verify Django Installation
 ```python
 import django
 django.__version__.
