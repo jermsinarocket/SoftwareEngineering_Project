@@ -4,8 +4,8 @@
 Python version: 3.7.2
 
 ## Prerequisites
-Ensure VirtualEnv is Installed : `pip install virtualenv`
-Ensure Django is Installed: `pip install Django`
+- Ensure VirtualEnv is Installed : `pip install virtualenv`
+- Ensure Django is Installed: `pip install Django`
 ```python
 import django
 django.__version__.
