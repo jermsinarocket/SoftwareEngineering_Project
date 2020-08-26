@@ -1,2 +1,1 @@
-# CZ2006 Software Engineering Project
-
+# Lab Manuals (DO NOT MERGE)
