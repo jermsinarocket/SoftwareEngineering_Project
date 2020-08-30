@@ -99,6 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+FIREBASE_CRED_PATH_URL = 'Enso/settings/firebase-cred.json'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
