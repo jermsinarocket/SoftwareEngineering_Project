@@ -1,6 +1,6 @@
 # CZ2006 Software Engineering Project
 
-# Image Processing Server 
+# Enso 
 Python version: 3.5 & above
 Django version: 3.1
 
