@@ -1,8 +1,8 @@
 # CZ2006 Software Engineering Project
 
-# Image Processing Server 
-Python version: 3.5 & above
-Django version: 3.1
+# Enso 
+- Python version: 3.5 & above
+- Django version: 3.1
 
 ## Prerequisites
 - Ensure VirtualEnv is Installed : `pip install virtualenv`
@@ -23,6 +23,6 @@ django.__version__
 ```
 
 ## Initializing the Server
-- change directory to 'tempproject': cd `tempproject`
+- change directory to 'Enso': cd `Enso`
 - run the server: `python manage.py runserver`
 - once done, you can deactivate the virtual environment: `env\bin\deactivate`
