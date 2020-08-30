@@ -1,7 +1,7 @@
 # CZ2006 Software Engineering Project
 
 # Enso 
-Python version: 3.5 & above
+Python version: 3.5 & above/n
 Django version: 3.1
 
 ## Prerequisites
