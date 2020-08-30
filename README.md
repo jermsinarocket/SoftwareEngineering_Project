@@ -23,6 +23,6 @@ django.__version__
 ```
 
 ## Initializing the Server
-- change directory to 'tempproject': cd `tempproject`
+- change directory to 'Enso': cd `Enso`
 - run the server: `python manage.py runserver`
 - once done, you can deactivate the virtual environment: `env\bin\deactivate`
