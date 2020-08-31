@@ -11,7 +11,7 @@ from firebase_admin import firestore
 from django.conf import settings
 
 def index(request):
-    '''
+
     cred = credentials.Certificate(getattr(settings, "FIREBASE_CRED_PATH_URL",None))
     firebase_admin.initialize_app(cred)
 
@@ -20,5 +20,5 @@ def index(request):
     docs = users_ref.stream()
     for doc in docs:
         print(f'{doc.id} => {doc.to_dict()}')
-    '''
+  
     return HttpResponse()
