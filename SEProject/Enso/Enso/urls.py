@@ -14,9 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include,path,re_path
+from Enso.app.views import login_view
+BASE_URL_PATTERN = 'Enso.app.views'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('app/', include('Enso.app.urls'))
+    #Landing Page redirect
+    re_path(r'^$', login_view.login, name='login'),
+    path('enso/',login_view.homepage,name='homepage')
+
+    #path('app/', include('Enso.app.urls'))
 ]

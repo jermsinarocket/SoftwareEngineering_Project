@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+import dj_database_url
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'v^wiv2i6uh^t+=w)sq-*apiq)^(n^0^$$$18h&-w*#8z8xcvo9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['enso-se.herokuapp.com']
 
 
 # Application definition
@@ -37,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Enso'
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,7 +58,7 @@ ROOT_URLCONF = 'Enso.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['Enso/app/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,15 +76,60 @@ WSGI_APPLICATION = 'Enso.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+'''
+'''
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+               'ENGINE': 'django.db.backends.mysql',
+               'HOST': '/cloudsql/enso-288112:asia-southeast1:enso',
+               'USER': 'enso-admin',
+               'PASSWORD': 'ensoadmin',
+               'NAME': 'enso-288112:asia-southeast1:enso',
+        }
+    }
+else:
+    # Running locally so connect to either a local MySQL instance or connect to
+    # Cloud SQL via the proxy. To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+'''
 
+#Heroku Postgre SQL
+DATABASES = {
 
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME' : 'd8cjpck2l7dird',
+        'USER': 'xbcbycibcvbzkd',
+
+        'PASSWORD':'410bfa64bdf1d4054cc46faa79029e6496dde513cd4a50314066f513c5706d5f',
+
+        'HOST':'ec2-54-86-170-8.compute-1.amazonaws.com',
+
+        'PORT':'5432',
+
+    }
+
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -118,4 +167,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'Enso/static/'
+STATIC_ROOT = 'Enso/root-static/'
+
+#  Add configuration for static files storage using whitenoise
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+ # Activate Django-Heroku.
+django_heroku.settings(locals())
+prod_db  =  dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(prod_db)
