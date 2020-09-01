@@ -112,7 +112,7 @@ else:
     }
 '''
 
-#Heroku Postgre SQL
+#Local Postgre SQL
 DATABASES = {
 
     'default': {
@@ -120,13 +120,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME' : 'd8cjpck2l7dird',
         'USER': 'xbcbycibcvbzkd',
-
         'PASSWORD':'410bfa64bdf1d4054cc46faa79029e6496dde513cd4a50314066f513c5706d5f',
-
         'HOST':'ec2-54-86-170-8.compute-1.amazonaws.com',
-
         'PORT':'5432',
-
     }
 
 }
@@ -166,6 +162,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL='/'
+LOGOUT_REDIRECT_URL = ''
 
 STATIC_URL = 'Enso/static/'
 STATIC_ROOT = 'Enso/root-static/'

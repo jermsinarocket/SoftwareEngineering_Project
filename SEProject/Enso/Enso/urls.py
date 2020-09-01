@@ -1,28 +1,15 @@
-"""Enso URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""Enso TOP-LEVEL URL Configuration
 """
 from django.contrib import admin
 from django.urls import include,path,re_path
-from Enso.app.views import login_view
-BASE_URL_PATTERN = 'Enso.app.views'
+from Enso.app.views import account_manager_view
 
+BASE_URL_CONTROLLER_DIR = 'Enso.app.controllers.'
 urlpatterns = [
     path('admin/', admin.site.urls),
     #Landing Page redirect
-    re_path(r'^$', login_view.login, name='login'),
-    path('enso/',login_view.homepage,name='homepage')
-
-    #path('app/', include('Enso.app.urls'))
+    ##re_path(r'^$', account_manager_view.login, name='login'),
+    ##path('logout/',account_manager_view.logout,name='logout'),
+    path('', include(BASE_URL_CONTROLLER_DIR + 'account_manager_urls_controller')),
+    path('enso/',account_manager_view.homepage,name='homepage')
 ]
