@@ -25,7 +25,7 @@ def login(request):
             return redirect('homepage')
         else:
             login_form = AuthenticationForm()
-            return render(request,'login.html',{'login_form':login_form})
+            return render(request,'login.html',{'login_form':login_form,'error':True})
 
     else:
         login_form = AuthenticationForm()
