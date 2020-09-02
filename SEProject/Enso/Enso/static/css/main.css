@@ -231,6 +231,7 @@ iframe {
 }
 
 /*==================================================================
+
 [ login more ]*/
 .login100-more {
   width: calc(100% - 560px);
@@ -458,6 +459,27 @@ input.input100 {
 
 /*------------------------------------------------------------------
 [ Button ]*/
+
+#closebt-container {
+	position: relative;
+	width:100%;
+	text-align:center;
+}
+
+.closebt {
+	-webkit-transition: all 0.2s;
+	-moz-transition: all 0.2s;
+	-ms-transition: all 0.2s;
+	-o-transition: all 0.2s;
+	transition: all 0.2s;
+	cursor:pointer;
+}
+
+.closebt:hover {
+	transform:rotate(90deg);
+}
+
+
 .container-login100-form-btn {
   width: 100%;
   display: -webkit-box;

@@ -16,10 +16,14 @@
   <link rel="stylesheet" type="text/css" href="{% static "vendor/topper/topper.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "css/util.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
+	<script src="{% static "vendor/jquery/jquery-3.2.1.min.js" %}"></script>
   <script src="{% static "vendor/topper/topper.js" %}"></script>
-  <script src="{% static "vendor/jquery/jquery-3.2.1.min.js" %}"></script>
+	<script src="{% static "vendor/animatedModal/animatedModal.js" %}"></script>
 </head>
+
 <body style="background-color: #666666;">
+
   {% if error %}
   <script>
     Topper({
@@ -32,7 +36,44 @@
       });
   </script>
   {% endif %}
+
 	<div class="limiter">
+		<div id="animatedModal">
+			<!--THIS IS IMPORTANT! to close the modal, the class name has to match the name given on the ID  class="close-animatedModal" -->
+			<div class='container d-flex w-50 h-100'>
+				<div class='col justify-content-md-left align-self-center'>
+					<div id="closebt-container" class="row close-animatedModal p-b-14">
+						<img class="closebt" src="{% static "images/closebt.svg" %}">
+					</div>
+					<div class='row'>
+						<span class="login100-form-title p-b-25" style="text-align:left !important; font-size:50px !important;">
+							Forgot your password?
+						</span>
+					</div>
+					<form id="resetpwdform" method='post'>
+						{% csrf_token %}
+						<div class='row'>
+							<label for="id_email" class='fs-20'>Email Address</label>
+						</div>
+						<div class='row p-t-5'>
+							<div class='wrap-input100 validate-input alert-validate' data-validate="Email is Required" style="height:50px;width:85%">
+								<input type="email" class="input100" name="email"  autocapitalize="none"  maxlength="100" required id="id_email">
+						  </div>
+						</div>
+						<div class='row'>
+							<span class='fs-13'>The email address you used when signing up for your Enso account.</span>
+						</div>
+						<div class='row'>
+							<div class="container-login100-form-btn p-t-25" style='width:25%'>
+								<button class="signup100-form-btn">
+									RESET
+								</button>
+							</div>
+						</div>
+					</form>
+			  </div>
+			</div>
+		</div>
 		<div class="container-login100" >
 			<div class="wrap-login100">
 				<form class="login100-form validate-form" method="post">
@@ -52,7 +93,7 @@
 					<div class="wrap-input100 validate-input alert-validate" data-validate="Password is required">
             <input type="password" name="password" class="input100" autocomplete="current-password" required id="id_password">
 						<span class="focus-input100"></span>
-            <label class="label-input100" for="password" class="label-input100">Password:</label>
+            <label class="label-input100" for="password">Password:</label>
 					</div>
 
 					<div class="flex-sb-m w-full p-t-3 p-b-32">
@@ -65,7 +106,7 @@
 						</div>
           -->
 						<div>
-							<a href="#" class="txt1">
+							<a id="forgotpwd" href="#animatedModal" class="txt1">
 								Forgot Password?
 							</a>
 						</div>
@@ -88,10 +129,8 @@
 
 			</div>
 		</div>
+
 	</div>
-
-
-
 
   <script src="{% static "vendor/jquery/jquery-3.2.1.min.js" %}"></script>
   <script src="{% static "vendor/animsition/js/animsition.min.js" %}"></script>
@@ -102,6 +141,13 @@
   <script src="{% static "vendor/daterangepicker/daterangepicker.js" %}"></script>
   <script src="{% static "vendor/countdowntime/countdowntime.js" %}"></script>
   <script src="{% static "js/login_validate.js" %}"></script>
-
+	<script src="{% static "vendor/animatedModal/animatedModal.min.js" %}"></script>
+	<script>
+		 $("#forgotpwd").animatedModal({
+                animatedIn:'lightSpeedIn',
+                animatedOut:'bounceOutDown',
+                color:'#77c5f8'
+            });
+	</script>
 </body>
 {% endblock %}

@@ -136,6 +136,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#EMAIL (MaiLGun)
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'postmaster@sandbox813068c5f77544e7a470a95010a839c9.mailgun.org'
+EMAIL_HOST_PASSWORD = '691a91eb52f14460a4cb1bdf0d676b56-7cd1ac2b-bfa11d5e'
+EMAIL_USE_TLS = True
+
 FIREBASE_CRED_PATH_URL = 'Enso/settings/firebase-cred.json'
 
 # Internationalization
