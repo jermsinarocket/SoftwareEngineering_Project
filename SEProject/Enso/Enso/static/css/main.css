@@ -339,6 +339,13 @@ input.input100 {
 
 /*---------------------------------------------*/
 
+#animatedModal{
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../images/reset-pw-bg.jpg');
+}
+
 .focus-input100 {
   position: absolute;
   display: block;
