@@ -225,6 +225,7 @@ iframe {
   align-items: stretch;
   flex-direction: row-reverse;
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   background-image: url('../images/login-bg.jpg');
 }
