@@ -27,13 +27,12 @@ $(document).on('submit', '#resetpwdform',function(event){
 		event.preventDefault()
 		$.ajax({
 				type : "POST",
-        url: '{% url "reset_password" %}', // the endpoint
+        url: '{% url "reset_password" %}', 
         data : {
 					email: $('#id_email').val(),
 					csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
 					action: 'post'
-				}, // data sent with the post request
-        // handle a successful response
+				},
         success : function(json) {
 					var reset = json['reset']
 					var tp_title;
