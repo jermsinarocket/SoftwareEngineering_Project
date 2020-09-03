@@ -8,6 +8,6 @@ BASE_URL_CONTROLLER_DIR = 'Enso.app.controllers.'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(BASE_URL_CONTROLLER_DIR + 'account_manager_urls_controller')),
-    path('enso/',account_manager_view.homepage,name='homepage'),
+    path('enso/',include(BASE_URL_CONTROLLER_DIR + 'main_urls_controller')),
     path('accounts/', include('django.contrib.auth.urls'))
 ]

@@ -19,7 +19,7 @@ import sys
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect('/enso')
+        return redirect('homepage')
 
     password_reset_form = PasswordResetForm()
 
@@ -69,8 +69,4 @@ def resetPassword(request):
 @login_required
 def logout(request):
     auth_logout(request)
-    return redirect('login')
-
-@login_required
-def homepage(request):
-    return render(request, 'homepage.html', {})
+    return redirect('login_user')
