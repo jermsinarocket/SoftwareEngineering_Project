@@ -22,6 +22,52 @@
 	<script src="{% static "vendor/animatedModal/animatedModal.js" %}"></script>
 </head>
 
+<script>
+$(document).on('submit', '#resetpwdform',function(event){
+		event.preventDefault()
+		$.ajax({
+				type : "POST",
+        url: '{% url "resetpassword" %}', // the endpoint
+        data : {
+					email: $('#id_email').val(),
+					csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+					action: 'post'
+				}, // data sent with the post request
+        // handle a successful response
+        success : function(json) {
+					var reset = json['reset']
+					var tp_title;
+					var tp_text;
+					var tp_style;
+					if(reset){
+						tp_title = 'Success: '
+						tp_text = 'An email with instructions to reset your password has been sent to the registered email.'
+						tp_style = 'success'
+					}else{
+						tp_title = 'Error: '
+						tp_text = 'User does not exist.'
+						tp_style = 'danger'
+					}
+
+					Topper({
+			      title: tp_title,
+			      text: tp_text,
+			      style: tp_style,
+			      type: 'top',
+			      autoclose: true,
+			      autocloseAfter: 3000
+			      });
+
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+					alert(errmsg)
+        }
+    });
+});
+</script>
+
 <body style="background-color: #666666;">
 
   {% if error %}
@@ -65,7 +111,7 @@
 						</div>
 						<div class='row'>
 							<div class="container-login100-form-btn p-t-25" style='width:40%'>
-								<button class="signup100-form-btn">
+								<button class="signup100-form-btn" type=submit id='reset-pwd-btn'>
 									RESET
 								</button>
 							</div>
