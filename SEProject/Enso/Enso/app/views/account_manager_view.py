@@ -41,6 +41,9 @@ def login(request):
         #send_mail('Enso - Password Reset', 'Password Reset Request', None, ['weixuan.tan95@gmail.com'])
         return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form})
 
+def register(request):
+    return render()
+    
 def resetPassword(request):
     email = request.POST['email'].strip()
     user = User.objects.filter(Q(email=email)).first()
