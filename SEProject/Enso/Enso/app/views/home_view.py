@@ -13,10 +13,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
+from Enso.app.models.profile import Profile
 
 import os
 import sys
 
 @login_required
 def homepage(request):
+    user = request.user
+    userId = user.id
+    userProfile = Profile.objects.get(user_id= userId)
+    print(userProfile.get_date_joined())
     return render(request, 'homepage.html', {})

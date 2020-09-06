@@ -5,7 +5,7 @@ Django settings for Enso project.
 from pathlib import Path
 import os
 import dj_database_url
-import django_heroku
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Enso'
+    'Enso',
+    'Enso.app.models'
 ]
 
 MIDDLEWARE = [
@@ -168,12 +169,13 @@ LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL = ''
 
 STATIC_URL = 'Enso/static/'
-STATIC_ROOT = 'Enso/root-static/'
+STATIC_ROOT = 'Enso/staticfiles/'
 
 #  Add configuration for static files storage using whitenoise
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
  # Activate Django-Heroku.
+import django_heroku
 django_heroku.settings(locals())
 prod_db  =  dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)

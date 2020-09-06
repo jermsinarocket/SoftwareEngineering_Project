@@ -23,11 +23,30 @@
 </head>
 
 <script>
+
+function previewFile(input){
+		var file = $("input[type=file]").get(0).files[0];
+
+		if(file){
+				var reader = new FileReader();
+
+				reader.onload = function(){
+						$("#previewImg").attr("src", reader.result);
+				}
+
+				reader.readAsDataURL(file);
+		}
+}
+
+function changeImage(){
+	$('#prof-pic-input').trigger("click")
+}
+
 $(document).on('submit', '#resetpwdform',function(event){
 		event.preventDefault()
 		$.ajax({
 				type : "POST",
-        url: '{% url "reset_password" %}', 
+        url: '{% url "reset_password" %}',
         data : {
 					email: $('#id_email').val(),
 					csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
@@ -39,11 +58,11 @@ $(document).on('submit', '#resetpwdform',function(event){
 					var tp_text;
 					var tp_style;
 					if(reset){
-						tp_title = 'Success: '
+						tp_title = ''
 						tp_text = 'An email with instructions to reset your password has been sent to the registered email.'
 						tp_style = 'success'
 					}else{
-						tp_title = 'Error: '
+						tp_title = ''
 						tp_text = 'User does not exist.'
 						tp_style = 'danger'
 					}
@@ -54,7 +73,7 @@ $(document).on('submit', '#resetpwdform',function(event){
 			      style: tp_style,
 			      type: 'top',
 			      autoclose: true,
-			      autocloseAfter: 3000
+			      autocloseAfter: 5000
 			      });
 
         },
@@ -83,11 +102,11 @@ $(document).on('submit', '#resetpwdform',function(event){
   {% endif %}
 
 	<div class="limiter">
-		<div id="animatedModal">
+		<div id="forgetpwd-animatedModal" class="bg-animatedModal">
 			<!--THIS IS IMPORTANT! to close the modal, the class name has to match the name given on the ID  class="close-animatedModal" -->
 			<div class='container d-flex w-50 h-100'>
 				<div class='col justify-content-md-left align-self-center'>
-					<div id="closebt-container" class="row close-animatedModal p-b-14">
+					<div id="closebt-container" class="row close-forgetpwd-animatedModal p-b-14">
 						<img class="closebt" src="{% static "images/closebt.svg" %}">
 					</div>
 					<div class='row'>
@@ -117,6 +136,41 @@ $(document).on('submit', '#resetpwdform',function(event){
 						</div>
 					</form>
 			  </div>
+			</div>
+		</div>
+
+		<div id="signup-animatedModal" class="bg-animatedModal">
+
+			<div class='container align-self-center'>
+					<div class='row'>
+						<div class="col-4">
+							<span class="align-top">
+								<div class="close-signup-animatedModal p-t-30">
+									<img class="closebt" src="{% static "images/closebt.svg" %}">
+								</div>
+							</span>
+						</div>
+					</div>
+					<div class='row justfy-content'>
+					  <div class="col-6">
+							<span class="login100-form-title p-b-25 p-t-15" style="text-align:left !important; font-size:45px !important;">
+								Sign Up
+							</span>
+						</div>
+					</div>
+					<div class='row d-flex justify-content-center'>
+						<img id="previewImg" class="preview-img" src="https://www.vippng.com/png/detail/355-3554387_create-digital-profile-icon-blue-profile-icon-png.png" onclick="changeImage()">
+						<input id="prof-pic-input" type="file" name="photo" onchange="previewFile(this);" class='file' >
+					</div>
+					<div class='row p-t-30'>
+						<div class="col-6  d-flex justify-content-center text-center">
+							test
+						</div>
+						<div class="col-6 d-flex justify-content-center text-center">
+							test
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="container-login100" >
@@ -151,7 +205,7 @@ $(document).on('submit', '#resetpwdform',function(event){
 						</div>
           -->
 						<div>
-							<a id="forgotpwd" href="#animatedModal" class="txt1">
+							<a id="forgotpwd" href="#forgetpwd-animatedModal" class="txt1">
 								Forgot Password?
 							</a>
 						</div>
@@ -165,9 +219,10 @@ $(document).on('submit', '#resetpwdform',function(event){
 					</div>
 
           <div class="container-login100-form-btn mt-3">
-            <button type ="button" class="signup100-form-btn">
+            <button id="signup" href="#signup-animatedModal" type="button" class="signup100-form-btn">
               Sign Up
             </button>
+
           </div>
 
 				</form>
@@ -189,6 +244,12 @@ $(document).on('submit', '#resetpwdform',function(event){
 	<script src="{% static "vendor/animatedModal/animatedModal.min.js" %}"></script>
 	<script>
 		 $("#forgotpwd").animatedModal({
+                animatedIn:'lightSpeedIn',
+                animatedOut:'bounceOutDown',
+                color:'#77c5f8'
+            });
+
+		$("#signup").animatedModal({
                 animatedIn:'lightSpeedIn',
                 animatedOut:'bounceOutDown',
                 color:'#77c5f8'

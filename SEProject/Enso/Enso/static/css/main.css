@@ -338,13 +338,19 @@ input.input100 {
 }
 
 /*---------------------------------------------*/
+.file{
+  color:transparent;
+  display:none;
+}
 
-#animatedModal{
+
+.bg-animatedModal{
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-image: url('../images/reset-pw-bg.jpg');
 }
+
 
 .focus-input100 {
   position: absolute;
@@ -677,4 +683,13 @@ input.input100 {
 .login100-form-social-item:hover {
   background: #333333;
   color: #fff;
+}
+
+
+.preview-img{
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  cursor:pointer;
+  border:1px solid #000;
 }

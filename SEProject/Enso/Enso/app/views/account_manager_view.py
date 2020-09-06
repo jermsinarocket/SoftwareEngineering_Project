@@ -13,7 +13,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
-
 import os
 import sys
 
@@ -43,7 +42,7 @@ def login(request):
 
 def register(request):
     return render()
-    
+
 def resetPassword(request):
     email = request.POST['email'].strip()
     user = User.objects.filter(Q(email=email)).first()
