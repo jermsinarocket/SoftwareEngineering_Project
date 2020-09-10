@@ -8,7 +8,9 @@ BASE_URL_CONTROLLER_DIR = 'Enso.app.controllers.'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #Account Management URL
     path('', include(BASE_URL_CONTROLLER_DIR + 'account_manager_urls_controller')),
+    #Main URLS
     path('enso/',include(BASE_URL_CONTROLLER_DIR + 'main_urls_controller')),
 
 ]

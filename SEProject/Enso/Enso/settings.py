@@ -5,6 +5,9 @@ Django settings for Enso project.
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -32,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Enso',
-    'Enso.app.models'
+    'Enso.app.models',
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -148,6 +152,13 @@ EMAIL_USE_TLS = True
 
 FIREBASE_CRED_PATH_URL = 'Enso/settings/firebase-cred.json'
 
+
+cloudinary.config(
+  cloud_name = "hgdcwue1c",
+  api_key = "926569871284251",
+  api_secret = "vEGK1pIyo1eoXlWHGPGPAh70RlM"
+)
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -171,6 +182,7 @@ LOGOUT_REDIRECT_URL = ''
 STATIC_URL = 'Enso/static/'
 STATIC_ROOT = 'Enso/staticfiles/'
 
+#DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 #  Add configuration for static files storage using whitenoise
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 

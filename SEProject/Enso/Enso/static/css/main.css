@@ -318,6 +318,16 @@ iframe {
   transition: all 0.4s;
 }
 
+.signup100{
+  display: block;
+  width: 100%;
+  background: transparent;
+  font-family: Montserrat-Regular;
+  font-size: 18px;
+  color: #555555;
+  padding: 0 26px;
+}
+
 .input100 {
   display: block;
   width: 100%;
@@ -349,6 +359,14 @@ input.input100 {
   background-position: center;
   background-repeat: no-repeat;
   background-image: url('../images/reset-pw-bg.jpg');
+}
+
+
+.bg-signup-animatedModal{
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  background-image: url('../images/signup-bg.jpg');
 }
 
 
@@ -691,5 +709,5 @@ input.input100 {
   height:150px;
   border-radius:50%;
   cursor:pointer;
-  border:1px solid #000;
+  border:1px solid #eeeeee;
 }

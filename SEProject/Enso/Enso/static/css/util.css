@@ -2229,7 +2229,7 @@
 /* ------------------------------------ */
 .text-white {color: white;}
 .text-black {color: black;}
-
+.text-red {color: red;}
 .text-hov-white:hover {color: white;}
 
 /* ------------------------------------ */
@@ -2982,12 +2982,3 @@
 	right: 0px;
 	bottom: 0px;
 }
-
-
-
-
-
-
-
-
-

@@ -13,8 +13,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 import os
 import sys
+import cloudinary
 
 def login(request):
     if request.user.is_authenticated:
@@ -41,6 +46,8 @@ def login(request):
         return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form})
 
 def register(request):
+    #cloudinary.uploader.upload("Enso/static/images/login-bg.jpg", public_id = 'sample_remote')
+    #cloudinary.utils.cloudinary_url("sample_remote.jpg")
     return render()
 
 def resetPassword(request):
