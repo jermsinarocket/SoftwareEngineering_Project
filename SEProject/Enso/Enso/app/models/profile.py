@@ -7,23 +7,28 @@ from datetime import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    gender = models.CharField(default='M',max_length=1, blank=False)
+    gender = models.CharField(default='Male',max_length=10, blank=False)
+    first_name = models.TextField(default="John",blank=False)
+    last_name = models.TextField(blank=True,null=True)
     birth_date = models.DateField(null=True, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-    avatar = models.ImageField(upload_to='Enso/static/images', null=True, blank=True)
+    profile_pic = models.TextField(default="user-default-profile-pic", null=True, blank=True)
 
     class Meta:
         app_label = "Enso"
-        
+
     def get_gender(self):
         return self.gender
 
     def get_birth_date(self):
-        return self.birth_date
+        return self.birth_date.strftime('%d-%m-%Y')
 
     def get_date_joined(self):
         return self.date_joined.strftime('%d-%m-%Y')
 
+    def get_full_name(self):
+        return self.last_name + ' ' + self.first_name
+        
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

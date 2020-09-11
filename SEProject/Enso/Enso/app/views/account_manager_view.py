@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
+from Enso.app.models.food_category import FoodCategory
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -26,7 +27,8 @@ def login(request):
         return redirect('homepage')
 
     password_reset_form = PasswordResetForm()
-
+    food_categories = FoodCategory.objects.all()
+    print(food_categories)
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -37,13 +39,13 @@ def login(request):
             return redirect('homepage')
         else:
             login_form = AuthenticationForm()
-            return render(request,'login.html',{'login_form':login_form,'pwd_reset_form':password_reset_form,'error':True})
+            return render(request,'login.html',{'login_form':login_form,'pwd_reset_form':password_reset_form,'error':True,'food_categories':food_categories})
 
     else:
         login_form = AuthenticationForm()
         password_reset_form = PasswordResetForm()
-        #send_mail('Enso - Password Reset', 'Password Reset Request', None, ['weixuan.tan95@gmail.com'])
-        return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form})
+
+        return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form,'food_categories':food_categories})
 
 def register(request):
     #cloudinary.uploader.upload("Enso/static/images/login-bg.jpg", public_id = 'sample_remote')
