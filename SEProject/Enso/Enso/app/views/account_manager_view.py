@@ -28,7 +28,7 @@ def login(request):
 
     password_reset_form = PasswordResetForm()
     food_categories = FoodCategory.objects.all()
-    print(food_categories)
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -48,9 +48,13 @@ def login(request):
         return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form,'food_categories':food_categories})
 
 def register(request):
-    #cloudinary.uploader.upload("Enso/static/images/login-bg.jpg", public_id = 'sample_remote')
+    if request.method == 'POST':
+        print(request.POST)
+        print(request.FILES)
+        #print(request.POST['file'])
+        #cloudinary.uploader.upload(request.FILES['file'], public_id = 'sample_remote')
     #cloudinary.utils.cloudinary_url("sample_remote.jpg")
-    return render()
+    return JsonResponse({'test':1})
 
 def resetPassword(request):
     email = request.POST['email'].strip()

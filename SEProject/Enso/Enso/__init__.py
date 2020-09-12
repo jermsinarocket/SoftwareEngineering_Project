@@ -3,3 +3,5 @@ django.setup()
 
 from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.profile import Profile
+from Enso.app.models.food_preferences import FoodPreferences
+    

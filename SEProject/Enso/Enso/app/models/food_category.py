@@ -6,10 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 
 class FoodCategory(models.Model):
-    category_name = models.TextField(default="Cuisine",blank=True,null=True)
+    category_name = models.TextField(default="Cuisine",blank=False,null=False)
 
     class Meta:
         app_label = "Enso"
-
-    def getCategoryFormatted(self):
-        return self.category_name + ' Cuisine'

@@ -1,6 +1,3 @@
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from django.conf import settings
@@ -10,18 +7,29 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
 from Enso.app.models.profile import Profile
+from Enso.app.models.food_category import FoodCategory
+from Enso.app.models.food_preferences import FoodPreferences
 
 import os
 import sys
 
 @login_required
 def homepage(request):
-    user = request.user
-    userId = user.id
-    userProfile = Profile.objects.get(user_id= userId)
-    print(userProfile.get_date_joined())
+    userProfile = Profile.objects.get(user_id= request.user.id)
+    foodCat = FoodCategory.objects.get(category_name='Korean')
+    allFoodCats = userProfile.food_categories.all()
+
+    for cat in allFoodCats:
+        print(cat.category_name)
+    #Check Exists
+    #print(FoodPreferences.objects.filter(user_profile=userProfile,food_category=foodCat).exists())
+
+    #food_preferences = FoodPreferences.objects.create(user_profile=userProfile,food_category=foodCat)
+    #print(food_preferences)
+    #for row in FoodPreferences.objects.filter(user_profile=userProfile):
+    #    print(row.food_category.category_name)
+
     return render(request, 'homepage.html', {})
