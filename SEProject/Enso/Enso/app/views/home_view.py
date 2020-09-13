@@ -19,11 +19,13 @@ import sys
 @login_required
 def homepage(request):
     userProfile = Profile.objects.get(user_id= request.user.id)
+    #print(request.user.profile.first_name)
     foodCat = FoodCategory.objects.get(category_name='Korean')
     allFoodCats = userProfile.food_categories.all()
-
-    for cat in allFoodCats:
-        print(cat.category_name)
+    #for obj in FoodPreferences.objects.filter(food_category_id=3):
+    #    print(obj.user_profile.first_name)
+    ##for cat in allFoodCats:
+    #    print(cat.category_name)
     #Check Exists
     #print(FoodPreferences.objects.filter(user_profile=userProfile,food_category=foodCat).exists())
 

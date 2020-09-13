@@ -10,10 +10,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
+from Enso.app.models.profile import Profile
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
 from Enso.app.models.food_category import FoodCategory
+from Enso.app.models.food_preferences import FoodPreferences
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -49,12 +51,51 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        print(request.POST)
-        print(request.FILES)
-        #print(request.POST['file'])
-        #cloudinary.uploader.upload(request.FILES['file'], public_id = 'sample_remote')
-    #cloudinary.utils.cloudinary_url("sample_remote.jpg")
-    return JsonResponse({'test':1})
+        post_data = request.POST
+        reg_email = post_data['reg_email']
+        reg_username = post_data['reg_username']
+
+        error_ids = []
+
+        if(User.objects.filter(username=reg_username).exists()):
+            error_ids.append('reg_username_error')
+
+        if(User.objects.filter(email=reg_email).exists()):
+            error_ids.append('reg_email_error')
+
+        if(len(error_ids) > 0):
+            return JsonResponse({'success':False,'errors':error_ids})
+        else:
+            try:
+                gender = post_data['reg_gender']
+                gender = "Male"
+            except:
+                gender = "Female"
+
+            foodCats = post_data['foodCat'].split(',')
+
+
+            user = User.objects.create_user(username=reg_username,
+                                            email=reg_email,
+                                            password=post_data['reg_pwd'])
+
+            userProfile = Profile.objects.get(user_id= user.id)
+
+            profile_pic_id = 'user-default-profile-pic'
+            if(len(request.FILES) != 0):
+                profile_pic_id = 'profile_pic_user_' + str(userProfile.id)
+                cloudinary.uploader.upload(request.FILES['file'], public_id = profile_pic_id)
+
+            userProfile.gender = gender
+            userProfile.first_name = post_data['reg_firstname']
+            userProfile.last_name =  post_data['reg_lastname']
+            userProfile.profile_pic = profile_pic_id
+            userProfile.save()
+
+            for food_cat_id in foodCats:
+                FoodPreferences.objects.create(user_profile=userProfile,food_category=FoodCategory.objects.get(pk= food_cat_id))
+
+            return JsonResponse({'success':True})
 
 def resetPassword(request):
     email = request.POST['email'].strip()

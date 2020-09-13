@@ -8,7 +8,6 @@ from datetime import datetime
 
 
 class FoodPreferences(models.Model):
-
     user_profile = models.ForeignKey('Profile', related_name='food_preferences', on_delete=models.CASCADE, null=True)
     food_category  = models.ForeignKey('FoodCategory', related_name='food_preferences', on_delete=models.CASCADE, null=True)
 
