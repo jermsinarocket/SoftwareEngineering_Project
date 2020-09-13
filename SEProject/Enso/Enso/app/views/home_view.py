@@ -19,6 +19,7 @@ import sys
 @login_required
 def homepage(request):
     userProfile = Profile.objects.get(user_id= request.user.id)
+    print(userProfile.get_profile_url())
     #print(request.user.profile.first_name)
     foodCat = FoodCategory.objects.get(category_name='Korean')
     allFoodCats = userProfile.food_categories.all()

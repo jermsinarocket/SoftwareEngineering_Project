@@ -83,7 +83,7 @@ def register(request):
 
             profile_pic_id = 'user-default-profile-pic'
             if(len(request.FILES) != 0):
-                profile_pic_id = 'profile_pic_user_' + str(userProfile.id)
+                profile_pic_id = 'profile-pic-user_' + str(userProfile.id)
                 cloudinary.uploader.upload(request.FILES['file'], public_id = profile_pic_id)
 
             userProfile.gender = gender

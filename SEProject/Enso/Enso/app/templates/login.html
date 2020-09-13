@@ -49,7 +49,7 @@ function previewFile(input){
 
 		if(file){
 				var reader = new FileReader();
-				console.log(reader)
+
 				reader.onload = function(){
 						$("#previewImg").attr("src", reader.result);
 				}

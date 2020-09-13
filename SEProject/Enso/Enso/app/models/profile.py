@@ -11,7 +11,7 @@ import cloudinary.api
 from datetime import datetime
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     food_categories = models.ManyToManyField('FoodCategory', through='FoodPreferences', related_name='user_profile')
     current_level = models.ForeignKey(LevelSystem, default=1, on_delete=models.CASCADE, related_name='user_profile')
     points = models.IntegerField(default=0,null=False, blank=False)
@@ -37,7 +37,7 @@ class Profile(models.Model):
         return self.last_name + ' ' + self.first_name
 
     def get_profile_url(self):
-        return cloudinary.utils.cloudinary_url("profile_pic_user"+ str(self.id) + ".jpg")
+        return cloudinary.utils.cloudinary_url(self.profile_pic + ".jpg")[0]
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
