@@ -1,6 +1,6 @@
 # CZ2006 Software Engineering Project
 
-# Enso 
+# Enso (https://www.enso.network)
 - Python version: 3.5 & above
 - Django version: 3.1
 
