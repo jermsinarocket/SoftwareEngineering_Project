@@ -13,6 +13,12 @@
   box-shadow:none !important;
   transition: none !important;
 }
+
+.section-divider{
+  background-color:#f8f9fa;
+  height:10px;
+  margin: 8px 0;
+}
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 {% load static %}

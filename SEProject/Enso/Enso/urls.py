@@ -11,6 +11,6 @@ urlpatterns = [
     #Account Management URL
     path('', include(BASE_URL_CONTROLLER_DIR + 'account_manager_urls_controller')),
     #Main URLS
-    path('enso/',include(BASE_URL_CONTROLLER_DIR + 'main_urls_controller')),
+    path('main/',include(BASE_URL_CONTROLLER_DIR + 'main_urls_controller')),
 
 ]

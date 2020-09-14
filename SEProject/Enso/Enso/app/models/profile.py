@@ -40,7 +40,7 @@ class Profile(models.Model):
         return self.last_name + ' ' + self.first_name
 
     def get_profile_url(self):
-        return cloudinary.utils.cloudinary_url(self.profile_pic + ".jpg")[0]
+        return cloudinary.utils.cloudinary_url(self.profile_pic + ".jpg",secure=True)[0]
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -18,11 +18,12 @@ import sys
 
 @login_required
 def homepage(request):
+
     userProfile = Profile.objects.get(user_id= request.user.id)
-    print(userProfile.get_profile_url())
+    food_categories = FoodCategory.objects.all()
     #print(request.user.profile.first_name)
-    foodCat = FoodCategory.objects.get(category_name='Korean')
-    allFoodCats = userProfile.food_categories.all()
+    #foodCat = FoodCategory.objects.get(category_name='Korean')
+
     #for obj in FoodPreferences.objects.filter(food_category_id=3):
     #    print(obj.user_profile.first_name)
     ##for cat in allFoodCats:
@@ -35,4 +36,4 @@ def homepage(request):
     #for row in FoodPreferences.objects.filter(user_profile=userProfile):
     #    print(row.food_category.category_name)
 
-    return render(request, 'homepage.html', {})
+    return render(request, 'homepage.html', {'food_categories':food_categories})
