@@ -1,0 +1,36 @@
+.notification-badge {
+	min-width: 7px;
+	border-radius: 2px;
+	padding: 1px 4px;
+	text-align: center;
+	cursor: pointer;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("../../images/bookmark.png") !important;
+
+}
+
+.notification-badge-content {
+	font-weight:bold;
+	color: #fff;
+	vertical-align: baseline;
+	position:relative;
+	top:-3px
+}
+
+.notification-badge-inline {
+	margin-left: 3px;
+	display: inline-block;
+	vertical-align: text-top;
+}
+.notification-badge-top {
+	position: absolute;
+	top: -2px;
+	right: -3px;
+}
+.notification-badge-bottom {
+	position: absolute;
+	bottom: -6px;
+	right: -1px;
+}

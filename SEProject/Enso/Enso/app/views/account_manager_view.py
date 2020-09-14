@@ -11,6 +11,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 from Enso.app.models.profile import Profile
+from Enso.app.models.zipcode import Zipcode
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordResetForm
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
@@ -52,6 +53,7 @@ def login(request):
 def register(request):
     if request.method == 'POST':
         post_data = request.POST
+        print(post_data)
         reg_email = post_data['reg_email']
         reg_username = post_data['reg_username']
 
@@ -86,10 +88,21 @@ def register(request):
                 profile_pic_id = 'profile-pic-user_' + str(userProfile.id)
                 cloudinary.uploader.upload(request.FILES['file'], public_id = profile_pic_id)
 
+            zipcode_lat = float(post_data['zipcode_lat'])
+            zipcode_long = float(post_data['zipcode_long'])
+            reg_zipcode = post_data['reg_zipcode']
+
+            if(Zipcode.objects.filter(zipcode=reg_zipcode).exists()):
+                zipcode = Zipcode.objects.get(zipcode= reg_zipcode)
+            else:
+                zipcode = Zipcode.objects.create(zipcode=reg_zipcode,latitude = zipcode_lat,longitude = zipcode_long)
+
             userProfile.gender = gender
             userProfile.first_name = post_data['reg_firstname']
             userProfile.last_name =  post_data['reg_lastname']
+            userProfile.phone_number = post_data['reg_phonenumber']
             userProfile.profile_pic = profile_pic_id
+            userProfile.zip_code = zipcode
             userProfile.save()
 
             for food_cat_id in foodCats:
