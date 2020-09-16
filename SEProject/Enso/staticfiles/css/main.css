@@ -1,7 +1,24 @@
+.rounded-search{
+   border-radius:1rem!important;
+}
 
+#location-search{
+  border: 1px solid #c5c5c5;
+  transition: all 0.5s ease;
+}
 
+#search-location-btn:hover,#search-location-btn:focus{
+  border:none !important;
+  outline: none !important;
+  box-shadow:none !important;
+  transition: none !important;
+}
 
-
+.section-divider{
+  background-color:#f8f9fa;
+  height:10px;
+  margin: 8px 0;
+}
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 {% load static %}
