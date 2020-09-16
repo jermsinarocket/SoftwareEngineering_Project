@@ -84,6 +84,8 @@
         'latLng': latlng
       }, function(results, status) {
           document.getElementById("search-location-input").value = results[0].formatted_address;
+          document.getElementById("curr-latitude").textContent = latitude
+          document.getElementById("curr-longitude").textContent = longitude
       });
     }
 
@@ -100,42 +102,6 @@
 
   </script>
   <body>
-    <script type="text/javascript">
-     (function(d, m){var s, h;
-     s = document.createElement("script");
-     s.type = "text/javascript";
-     s.async=true;
-     s.src="https://apps.applozic.com/sidebox.app";
-     h=document.getElementsByTagName('head')[0];
-     h.appendChild(s);
-     window.applozic=m;
-     m.init=function(t){m._globals=t;}})(document, window.applozic || {});
-
-    window.applozic.init({
-      appId: '33475016416a3cf577d8e5161ca4cc32',      //Get your App ID from https://www.applozic.com
-      userId: {{user.profile.id}},                     //Logged in user's id, a unique identifier for user
-      userName: '{{user.profile.first_name}}',                 //User's display name
-      imageLink : '{{user.profile.ge1t_profile_url}}',                     //User's profile picture url
-      desktopNotification: true,
-      source: '5',                          // optional, WEB(1),DESKTOP_BROWSER(5), MOBILE_BROWSER(6)
-      notificationIconLink: "{% static 'images/icons/favicon.ico' %}",    //Icon to show in desktop notification, replace with your icon
-      notificationSoundLink :"{% static 'vendor/Applozic/public/plugin/audio/notification_tone.mp3' %}",
-      authenticationTypeId: 1,          //1 for password verification from Applozic server and 0 for access Token verification from your server
-      accessToken: '',                    //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
-      locShare: true,
-      googleMapScriptLoaded : true,   // true if your app already loaded google maps script
-      autoTypeSearchEnabled : true,     // set to false if you don't want to allow sending message to user who is not in the contact list
-      loadOwnContacts : false, //set to true if you want to populate your own contact list
-       onInit : function(response) {
-          if (response === "success") {
-             console.log('login successful, perform your actions if any, for example: load contacts, getting unread message count, etc')
-          } else {
-            console.log(response)
-          }
-      }
-   });
-
-    </script>
 
     <div class="container p-t-10">
       <nav class="navbar navbar-expand-lg navbar-light sticky-top">
@@ -199,11 +165,14 @@
                 </div>
               </div>
           </form>
+
         </div>
         <div class="col-1">
         </div>
       </div>
       {% endif %}
+      <span id="curr-latitude" class="dis-none">{{user.profile.zip_code.latitude}}</span>
+      <span id="curr-longitude" class="dis-none">{{user.profile.zip_code.longitude}}</span>
 
       <div class="row p-t-10">
         <div class="col-1">
@@ -259,8 +228,10 @@
     </div>
 
     <div class="row section-divider">
+
     </div>
 
+    <span id="chat-unread-count" class="chat-launcher-icon" ></span>
     <script>
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom');
     $('.pop-up-tooltip').popup({transition:'Fade Up'});
@@ -270,6 +241,63 @@
     <script src="{% static "vendor/Applozic/public/plugin/js/app/modules/applozic.jquery.js" %}"></script>
     <script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-6.1.min.js"></script>
     <script src="{% static "vendor/Applozic/public/plugin/js/app/sidebox/applozic.sidebox.js" %}"></script>
+
+    <script>
+    (function(d, m){var s, h;
+       s = document.createElement("script");
+       s.type = "text/javascript";
+       s.async=true;
+       s.src="https://apps.applozic.com/sidebox.app";
+       h=document.getElementsByTagName('head')[0];
+       h.appendChild(s);
+       window.applozic=m;
+       m.init=function(t){m._globals=t;}})(document, window.applozic || {});
+    </script>
+
+    <script type="text/javascript">
+
+      window.applozic.init({
+        appId: '33475016416a3cf577d8e5161ca4cc32',      //Get your App ID from https://www.applozic.com
+        userId: {{user.profile.id}},                     //Logged in user's id, a unique identifier for user
+        userName: '{{user.profile.first_name}}',                 //User's display name
+        imageLink : '{{user.profile.ge1t_profile_url}}',                     //User's profile picture url
+        desktopNotification: true,
+        source: '5',                          // optional, WEB(1),DESKTOP_BROWSER(5), MOBILE_BROWSER(6)
+        notificationIconLink: "{% static 'images/icons/favicon.ico' %}",    //Icon to show in desktop notification, replace with your icon
+        notificationSoundLink :"{% static 'vendor/Applozic/public/plugin/audio/notification_tone.mp3' %}",
+        authenticationTypeId: 1,          //1 for password verification from Applozic server and 0 for access Token verification from your server
+        accessToken: '',                    //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+        locShare: true,
+        googleMapScriptLoaded : true,   // true if your app already loaded google maps script
+        autoTypeSearchEnabled : true,     // set to false if you don't want to allow sending message to user who is not in the contact list
+        loadOwnContacts : false, //set to true if you want to populate your own contact list,
+        topicBox:true,
+        disableSelfChat:true,
+        groupUserCount: true,
+        onInit : function(response) {
+            if (response === "success") {
+               console.log('login successful, perform your actions if any, for example: load contacts, getting unread message count, etc')
+               $("#mck-sidebox-launcher").prepend("<span id='unread-count' class='bold fs-16 dis-none' ></span>")
+            }
+        }
+     });
+
+    </script>
+
+    <script>
+
+    $("#chat-unread-count").on('DOMSubtreeModified', function () {
+      var unread_count = $('#chat-unread-count').text()
+      console.log(unread_count)
+      if(unread_count.length === 0){
+        $("#unread-count").addClass('dis-none')
+      }else{
+        $("#unread-count").removeClass('dis-none')
+        document.getElementById("unread-count").textContent = $('#chat-unread-count').text()
+      }
+    });
+
+    </script>
 
   </body>
 </html>

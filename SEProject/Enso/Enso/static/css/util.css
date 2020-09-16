@@ -2281,6 +2281,7 @@
 /*[ Display ]
 -----------------------------------------------------------
 */
+.vis-hidden {visibility: hidden;}
 .dis-none {display: none;}
 .dis-block {display: block;}
 .dis-inline {display: inline;}

@@ -139,9 +139,9 @@ $(document).on('submit', '#signupform',function(event){
 			formValid = false
 		}
 
-	var zipcode_lat = '';
-	var zipcode_long = '';
-	if(/\d{6}/g.test($('#reg_zipcode').val())){
+		var zipcode_lat = '';
+		var zipcode_long = '';
+		if(/\d{6}/g.test($('#reg_zipcode').val())){
 
 		$('#reg_zipcode_error').addClass("dis-none")
 		var  geocoder = new google.maps.Geocoder();

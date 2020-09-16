@@ -1,3 +1,14 @@
+#unread-count{
+  z-index:99 !important;
+  position:relative;
+  left:38px;
+  top:-5px;
+  color:white;
+  border:1px solid red;
+  border-radius:20%;
+  background-color:red;
+}
+
 .rounded-search{
    border-radius:1rem!important;
 }
