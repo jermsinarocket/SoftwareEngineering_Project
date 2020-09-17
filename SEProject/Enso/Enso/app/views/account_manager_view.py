@@ -90,12 +90,13 @@ def register(request):
 
             zipcode_lat = float(post_data['zipcode_lat'])
             zipcode_long = float(post_data['zipcode_long'])
+            formatted_address = post_data['formatted_address']
             reg_zipcode = post_data['reg_zipcode']
 
             if(Zipcode.objects.filter(zipcode=reg_zipcode).exists()):
                 zipcode = Zipcode.objects.get(zipcode= reg_zipcode)
             else:
-                zipcode = Zipcode.objects.create(zipcode=reg_zipcode,latitude = zipcode_lat,longitude = zipcode_long)
+                zipcode = Zipcode.objects.create(zipcode=reg_zipcode,latitude = zipcode_lat,longitude = zipcode_long,address = formatted_address)
 
             userProfile.gender = gender
             userProfile.first_name = post_data['reg_firstname']

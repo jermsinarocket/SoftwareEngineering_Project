@@ -6,6 +6,6 @@ class Zipcode(models.Model):
     zipcode = models.CharField(max_length=6, primary_key=True)
     latitude = models.FloatField(default=1.2789,null=False, blank=False)
     longitude = models.FloatField(default=103.8536,null=False, blank=False)
-
+    address = models.TextField(default="TEMP",null=False,blank=False)
     class Meta:
         app_label = "Enso"

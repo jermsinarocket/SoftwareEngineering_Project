@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from Enso.app.models.food_category import FoodCategory
+from Enso.app.models.gathering import Gathering
 from Enso.app.models.level_system import LevelSystem
 from Enso.app.models.zipcode import Zipcode
 from django.dispatch import receiver
@@ -14,8 +15,9 @@ from datetime import datetime
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     food_categories = models.ManyToManyField('FoodCategory', through='FoodPreferences', related_name='user_profile')
-    current_level = models.ForeignKey(LevelSystem, default=1,related_name='user_profile',on_delete=models.CASCADE, )
-    zip_code = models.ForeignKey(Zipcode, null=True,blank=True, related_name='user_profile',on_delete=models.CASCADE)
+    gatherings = models.ManyToManyField('Gathering', through='UserGathering', related_name='user_profile')
+    current_level = models.ForeignKey(LevelSystem, default=1,related_name='user_profile',on_delete=models.CASCADE )
+    zip_code = models.ForeignKey(Zipcode, null=True,blank=True, related_name='user_profile',on_delete=models.SET_NULL)
     points = models.IntegerField(default=0,null=False, blank=False)
     gender = models.CharField(default='Male',max_length=10, blank=False)
     first_name = models.TextField(default="John",blank=False)

@@ -148,59 +148,70 @@ $(document).on('submit', '#signupform',function(event){
 
 		geocoder.geocode( { 'address':$('#reg_zipcode').val(),'componentRestrictions':{'country':'SG'}}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
+
       	zipcode_lat = results[0].geometry.location.lat();
         zipcode_long = results[0].geometry.location.lng();
 
-				var foodCatData = $('#food-cat').selectivity('data')
-	 			var selectedFoodCatID = []
+				var latlng = new google.maps.LatLng(zipcode_lat, zipcode_long);
+				var formattedAddress = ''
+	      geocoder.geocode({
+	        'latLng': latlng
+	      }, function(results, status) {
+	          formattedAddress = results[0].formatted_address;
 
-	 			if(foodCatData.length != 0){
-	 				for (foodCat of foodCatData) {
-	 		  			selectedFoodCatID.push(foodCat['id'])
-	 				}
-		 		}
+						var foodCatData = $('#food-cat').selectivity('data')
+			 			var selectedFoodCatID = []
 
-				var data = new FormData($('#signupform')[0])
-				data.append('foodCat',selectedFoodCatID);
-				data.append('zipcode_lat',zipcode_lat);
-				data.append('zipcode_long',zipcode_long);
-		 		data.append('file', $("input[type=file]").get(0).files[0]);
-				$.ajax({
-						type : "POST",
-		        url: '{% url "register_user" %}',
-						type:'post',
-						headers: {'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()},
-		        data : data,
-						contentType: false,
-					 	processData: false,
-		        success : function(json) {
-								if(json['success']){
-									$(".close-signup-animatedModal").trigger('click')
+			 			if(foodCatData.length != 0){
+			 				for (foodCat of foodCatData) {
+			 		  			selectedFoodCatID.push(foodCat['id'])
+			 				}
+				 		}
 
-									Topper({
-										title: 'Congratulations!',
-										text: 'Your account has been successfully created',
-										style: 'success',
-										type: 'top',
-										autoclose: true,
-										autocloseAfter: 5000
-										});
+						var data = new FormData($('#signupform')[0])
+						data.append('foodCat',selectedFoodCatID);
+						data.append('zipcode_lat',zipcode_lat);
+						data.append('zipcode_long',zipcode_long);
+						data.append('formatted_address',formattedAddress)
+				 		data.append('file', $("input[type=file]").get(0).files[0]);
+						$.ajax({
+								type : "POST",
+				        url: '{% url "register_user" %}',
+								type:'post',
+								headers: {'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()},
+				        data : data,
+								contentType: false,
+							 	processData: false,
+				        success : function(json) {
+										if(json['success']){
+											$(".close-signup-animatedModal").trigger('click')
 
-								}else{
-									for( i in json['errors']){
-										$('#' + json['errors'][i]).removeClass("dis-none")
-									}
-								}
-		        },
-		        // handle a non-successful response
-		        error : function(xhr,errmsg,err) {
-							alert(errmsg)
-		        }
-		    });
+											Topper({
+												title: 'Congratulations!',
+												text: 'Your account has been successfully created',
+												style: 'success',
+												type: 'top',
+												autoclose: true,
+												autocloseAfter: 5000
+												});
+
+										}else{
+											for( i in json['errors']){
+												$('#' + json['errors'][i]).removeClass("dis-none")
+											}
+										}
+				        },
+				        // handle a non-successful response
+				        error : function(xhr,errmsg,err) {
+									alert(errmsg)
+				        }
+		    	});
+				});
 	 		}else {
 				$('#reg_zipcode_error').removeClass("dis-none")
 				formValid = false
       }
+
     });
 
 	}else{
