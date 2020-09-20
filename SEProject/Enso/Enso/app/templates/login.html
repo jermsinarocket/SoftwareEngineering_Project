@@ -143,10 +143,78 @@ $(document).on('submit', '#signupform',function(event){
 		var zipcode_long = '';
 		if(/\d{6}/g.test($('#reg_zipcode').val())){
 
-		$('#reg_zipcode_error').addClass("dis-none")
+			$('#reg_zipcode_error').addClass("dis-none")
+			var formattedAddress = ''
+				$.ajax({
+						url: 'https://developers.onemap.sg/commonapi/search?searchVal=' + $('#reg_zipcode').val() + '&returnGeom=Y&getAddrDetails=Y&pageNum=1',
+						type:'get',
+						contentType: false,
+						processData: false,
+						success : function(json) {
+								if(json['found'] === 0){
+									$('#reg_zipcode_error').removeClass("dis-none")
+									formValid = false
+								}else{
+									zipcode_lat = json['results'][0]['LATITUDE'];
+									zipcode_long = json['results'][0]['LONGITUDE'];
+									formattedAddress = json['results'][0]['BLK_NO'] + " " + json['results'][0]['ROAD_NAME']
+
+									var foodCatData = $('#food-cat').selectivity('data')
+						 			var selectedFoodCatID = []
+
+						 			if(foodCatData.length != 0){
+						 				for (foodCat of foodCatData) {
+						 		  			selectedFoodCatID.push(foodCat['id'])
+						 				}
+							 		}
+
+									var data = new FormData($('#signupform')[0])
+									data.append('foodCat',selectedFoodCatID);
+									data.append('zipcode_lat',zipcode_lat);
+									data.append('zipcode_long',zipcode_long);
+									data.append('formatted_address',formattedAddress)
+							 		data.append('file', $("input[type=file]").get(0).files[0]);
+									$.ajax({
+											type : "POST",
+							        url: '{% url "register_user" %}',
+											headers: {'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()},
+							        data : data,
+											contentType: false,
+										 	processData: false,
+							        success : function(json) {
+													if(json['success']){
+														$(".close-signup-animatedModal").trigger('click')
+
+														Topper({
+															title: 'Congratulations!',
+															text: 'Your account has been successfully created',
+															style: 'success',
+															type: 'top',
+															autoclose: true,
+															autocloseAfter: 5000
+															});
+
+													}else{
+														for( i in json['errors']){
+															$('#' + json['errors'][i]).removeClass("dis-none")
+														}
+													}
+							        },
+							        // handle a non-successful response
+							        error : function(xhr,errmsg,err) {
+												alert(errmsg)
+							        }
+					    	});
+
+								}
+
+						}
+			});
+
+			/*
 		var  geocoder = new google.maps.Geocoder();
 
-		geocoder.geocode( { 'address':$('#reg_zipcode').val(),'componentRestrictions':{'country':'SG'}}, function(results, status) {
+		geocoder.geocode({ 'address':$('#reg_zipcode').val(),'componentRestrictions':{'country':'SG'}}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
 
       	zipcode_lat = results[0].geometry.location.lat();
@@ -212,7 +280,7 @@ $(document).on('submit', '#signupform',function(event){
 				formValid = false
       }
 
-    });
+    }); */
 
 	}else{
 			$('#reg_zipcode_error').removeClass("dis-none")

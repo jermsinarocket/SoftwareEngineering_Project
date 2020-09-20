@@ -23,7 +23,6 @@ import cloudinary.api
 
 import os
 import sys
-import cloudinary
 
 def login(request):
     if request.user.is_authenticated:
@@ -53,7 +52,7 @@ def login(request):
 def register(request):
     if request.method == 'POST':
         post_data = request.POST
-        print(post_data)
+        
         reg_email = post_data['reg_email']
         reg_username = post_data['reg_username']
 
@@ -96,7 +95,7 @@ def register(request):
             if(Zipcode.objects.filter(zipcode=reg_zipcode).exists()):
                 zipcode = Zipcode.objects.get(zipcode= reg_zipcode)
             else:
-                zipcode = Zipcode.objects.create(zipcode=reg_zipcode,latitude = zipcode_lat,longitude = zipcode_long,address = formatted_address)
+                zipcode = Zipcode.objects.create(zipcode=reg_zipcode,latitude = zipcode_lat,longitude = zipcode_long,address = formatted_address.title())
 
             userProfile.gender = gender
             userProfile.first_name = post_data['reg_firstname']

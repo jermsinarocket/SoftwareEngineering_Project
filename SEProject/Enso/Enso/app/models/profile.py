@@ -32,9 +32,6 @@ class Profile(models.Model):
     def get_gender(self):
         return self.gender
 
-    def get_birth_date(self):
-        return self.birth_date.strftime('%d-%m-%Y')
-
     def get_date_joined(self):
         return self.date_joined.strftime('%d-%m-%Y')
 
