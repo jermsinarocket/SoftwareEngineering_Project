@@ -5,9 +5,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+
+from Enso.app.controllers.logic.cloudinary import getImageURL,getImageList
 
 class FoodStore(models.Model):
 
@@ -23,4 +22,10 @@ class FoodStore(models.Model):
         app_label = "Enso"
 
     def get_storepic_url(self):
-        return cloudinary.utils.cloudinary_url("Food Stores/" + self.store_image + ".jpg",secure=True)[0]
+        return getImageURL(self.store_image,"jpg","Food Stores/")
+
+    def get_store_menu(self):
+        return getImageURL(self.store_image,"pdf","Food Stores/")
+
+    def get_store_pics(self):
+        return getImageList(self.id)

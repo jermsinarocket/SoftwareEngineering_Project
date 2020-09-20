@@ -15,15 +15,16 @@ from Enso.app.models.food_preferences import FoodPreferences
 from Enso.app.models.food_store import FoodStore
 from Enso.app.models.zipcode import Zipcode
 from Enso.app.models.hawker_centre import HawkerCentre
-from Enso.app.controllers.distance_routing import route
-import os
-import sys
-import requests
+from Enso.app.controllers.logic.distance_routing import route
 from django.core import serializers
 from django.http import JsonResponse,QueryDict
 
+import os
+import sys
+import requests
+
 @login_required
-def loadFoodListings(request):
+def food_store_listings(request):
     if request.method == 'POST':
         post_data = request.POST
         curr_lat = post_data['curr_lat']
@@ -46,3 +47,7 @@ def loadFoodListings(request):
             stores_list = route(stores_qdict,curr_lat,curr_long)
 
         return JsonResponse({'stores':stores_list})
+
+@login_required
+def food_store(request,store_id):
+    return HttpResponse(store_id)

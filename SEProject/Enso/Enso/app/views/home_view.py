@@ -28,7 +28,6 @@ def homepage(request):
 
     userProfile = Profile.objects.get(user_id= request.user.id)
     food_categories = FoodCategory.objects.all()
-    #r = requests.get("http://res.cloudinary.com/hgdcwue1c/image/list/test.json")
 
     '''
     r = requests.get(url = "https://data.gov.sg/api/action/datastore_search?resource_id=8f6bba57-19fc-4f36-8dcf-c0bda382364d")
@@ -72,8 +71,3 @@ def homepage(request):
     #    print(row.food_category.category_name)
 
     return render(request, 'homepage.html', {'food_categories':food_categories})
-
-
-@login_required
-def foodstore_page(request,store_id):
-    return HttpResponse(store_id)

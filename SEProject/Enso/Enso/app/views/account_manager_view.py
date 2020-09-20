@@ -17,9 +17,7 @@ from django.db.models.query_utils import Q
 from django.core.mail import send_mail
 from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.food_preferences import FoodPreferences
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+from Enso.app.controllers.logic.cloudinary import uploadFile
 
 import os
 import sys
@@ -28,7 +26,6 @@ def login(request):
     if request.user.is_authenticated:
         return redirect('homepage')
 
-    password_reset_form = PasswordResetForm()
     food_categories = FoodCategory.objects.all()
 
     if request.method == 'POST':
@@ -41,18 +38,15 @@ def login(request):
             return redirect('homepage')
         else:
             login_form = AuthenticationForm()
-            return render(request,'login.html',{'login_form':login_form,'pwd_reset_form':password_reset_form,'error':True,'food_categories':food_categories})
+            return render(request,'login.html',{'error':True,'food_categories':food_categories})
 
     else:
-        login_form = AuthenticationForm()
-        password_reset_form = PasswordResetForm()
-
-        return render(request, 'login.html', {'login_form':login_form,'pwd_reset_form':password_reset_form,'food_categories':food_categories})
+        return render(request, 'login.html', {'food_categories':food_categories})
 
 def register(request):
     if request.method == 'POST':
         post_data = request.POST
-        
+
         reg_email = post_data['reg_email']
         reg_username = post_data['reg_username']
 
@@ -75,7 +69,6 @@ def register(request):
 
             foodCats = post_data['foodCat'].split(',')
 
-
             user = User.objects.create_user(username=reg_username,
                                             email=reg_email,
                                             password=post_data['reg_pwd'])
@@ -85,7 +78,7 @@ def register(request):
             profile_pic_id = 'user-default-profile-pic'
             if(len(request.FILES) != 0):
                 profile_pic_id = 'profile-pic-user_' + str(userProfile.id)
-                cloudinary.uploader.upload(request.FILES['file'], public_id = profile_pic_id)
+                uploadFile(request.FILES['file'],profile_pic_id)
 
             zipcode_lat = float(post_data['zipcode_lat'])
             zipcode_long = float(post_data['zipcode_long'])

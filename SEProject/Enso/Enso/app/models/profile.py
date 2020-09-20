@@ -7,10 +7,9 @@ from Enso.app.models.zipcode import Zipcode
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 from datetime import datetime
+
+from Enso.app.controllers.logic.cloudinary import getImageURL
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -39,7 +38,7 @@ class Profile(models.Model):
         return self.last_name + ' ' + self.first_name
 
     def get_profile_url(self):
-        return cloudinary.utils.cloudinary_url(self.profile_pic + ".jpg",secure=True)[0]
+        return getImageURL(self.profile_pic,'jpg')
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

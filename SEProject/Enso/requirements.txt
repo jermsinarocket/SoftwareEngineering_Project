@@ -1,4 +1,6 @@
+APScheduler==3.6.3
 asgiref==3.2.10
+bisect-b2g==1
 CacheControl==0.12.6
 cachetools==4.1.1
 certifi==2020.6.20
@@ -22,12 +24,14 @@ google-cloud-storage==1.31.0
 google-crc32c==1.0.0
 google-resumable-media==1.0.0
 googleapis-common-protos==1.52.0
+googlemaps==4.4.2
 graphviz==0.14.1
 grpcio==1.31.0
 gunicorn==20.0.4
 h5py==2.10.0
 httplib2==0.18.1
 idna==2.10
+isodate==0.6.0
 Keras==2.4.3
 msgpack==1.0.0
 mysqlclient==2.0.1
@@ -48,6 +52,7 @@ rsa==4.6
 scipy==1.5.2
 six==1.15.0
 sqlparse==0.3.1
+tzlocal==2.1
 ua-parser==0.10.0
 uritemplate==3.0.1
 urllib3==1.25.10

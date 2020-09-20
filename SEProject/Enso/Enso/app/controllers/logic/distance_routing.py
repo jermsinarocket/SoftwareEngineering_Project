@@ -1,10 +1,9 @@
 import bisect
 import googlemaps
 from django.forms.models import model_to_dict
+from Enso.app.controllers.logic.geocoder import getDistance
 
 def route(stores_qdict,user_latitude,user_longitude):
-    gmaps = googlemaps.Client(key="AIzaSyCKYnwgeoP-2ovBzcN8veUZzDN6SrYv1t0")
-
     origin = [{"lat": user_latitude, "lng": user_longitude}]
 
     distance_list = []
@@ -37,12 +36,7 @@ def route(stores_qdict,user_latitude,user_longitude):
         store_list.insert(index_inserted,store_dict)
 
         count+=1
-        #if count==4:
-        #    break
+        if count==4:
+            break
 
     return store_list
-
-
-def getDistance(origin,destination):
-    gmaps = googlemaps.Client(key="AIzaSyCKYnwgeoP-2ovBzcN8veUZzDN6SrYv1t0")
-    return gmaps.distance_matrix(origin,destination)

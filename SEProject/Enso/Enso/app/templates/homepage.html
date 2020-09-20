@@ -44,7 +44,6 @@
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
     <script src="{% static "vendor/Customizable-Badges/jquery.badge.js" %}"></script>
 
-
   </head>
   <script>
     var geocoder = new google.maps.Geocoder();
@@ -154,7 +153,7 @@
 
       $.ajax({
           type : "post",
-          url: '{% url "load_food_listings" %}',
+          url: '{% url "store_listings" %}',
           headers: {'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()},
           data : data,
           contentType: false,
@@ -178,10 +177,10 @@
                                                 "<img class='card-img-top' src='" + store['store_image'] +"'style='height: 22vh;'>"  +
                                                 "<div class='container p-t-5'style='padding-left:30px'><div class='row'>" +
                                                 "<div class='col-sm-9' style='padding-left:0'><h5 class='card-title'>"+ store['store_name']+"</h5></div>"+
-                                                "<div class='col-sm-3' style='padding-left:0;padding-top:5;'><span class='label label-default float-right fs-10' style='background-color:#666;color:white'>"+ store['cuisine_type'] +"</span></div></div>"+
+                                                "<div class='col-sm-3' style='padding-left:0;padding-top:5'><span class='label label-default float-right fs-10' style='background-color:#666;color:white'>"+ store['cuisine_type'] +"</span></div></div>"+
                                                 "<div class='row'><span class='italic'>" + store['hawker_centre'] +"</span></div>"+
                                                 "<div class='row' style='padding-top:3'><span class='italic fs-11'><i class='fa fa-road' style='color:#212529'></i>" + store['distance'] + "   <i class='fa fa-car' style='color:#212529'></i>  " + store['duration'] +"</span></div>" +
-                                                "<a href='/main/store/"+ store['id'] +"' class='stretched-link'></a></div>" +
+                                                "<a href='store/"+ store['id'] +"' class='stretched-link'></a></div>" +
                                               "</div>" +
                                              "</div>"
 
@@ -329,7 +328,7 @@
       </div>
     </div>
     <div class="row section-divider"></div>
-    <div id="foodListings" class="container p-t-10">
+    <div id="foodListings" class="container p-t-10" >
       <div id="foodListingsSpinner" class="m-t-200"></div>
       <div id="storesList">
       </div>
