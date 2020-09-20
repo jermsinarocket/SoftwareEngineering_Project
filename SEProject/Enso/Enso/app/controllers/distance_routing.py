@@ -33,11 +33,12 @@ def route(stores_qdict,user_latitude,user_longitude):
         store_dict['address'] = store.hawker_centre.zip_code.address
         store_dict['zipcode'] = store.hawker_centre.zip_code.zipcode
         store_dict['store_image'] = store.get_storepic_url()
+        store_dict['cuisine_type'] = store.cuisine_type.category_name
         store_list.insert(index_inserted,store_dict)
 
         count+=1
-        if count==4:
-            break
+        #if count==4:
+        #    break
 
     return store_list
 
