@@ -25,7 +25,7 @@ class FoodStore(models.Model):
         return getImageURL(self.store_image,"jpg","Food Stores/")
 
     def get_store_menu(self):
-        return getImageURL(self.store_image,"pdf","Food Stores/")
+        return getImageURL(self.store_menu,"pdf","Food Stores/")
 
     def get_store_pics(self):
         return getImageList(self.id)

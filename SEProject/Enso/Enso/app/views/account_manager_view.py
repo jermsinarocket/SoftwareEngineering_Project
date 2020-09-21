@@ -37,7 +37,6 @@ def login(request):
             auth_login(request, user)
             return redirect('homepage')
         else:
-            login_form = AuthenticationForm()
             return render(request,'login.html',{'error':True,'food_categories':food_categories})
 
     else:
