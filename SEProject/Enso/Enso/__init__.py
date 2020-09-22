@@ -1,4 +1,4 @@
-'''
+
 import django
 
 django.setup()
@@ -13,4 +13,4 @@ from Enso.app.models.hawker_centre import HawkerCentre
 from Enso.app.models.opening_hours import OpeningHours
 from Enso.app.models.gathering import Gathering
 from Enso.app.models.user_gathering import UserGathering
-'''
+from Enso.app.models.rating import Rating

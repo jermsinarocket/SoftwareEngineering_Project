@@ -18,6 +18,8 @@ from Enso.app.models.hawker_centre import HawkerCentre
 from Enso.app.controllers.logic.distance_routing import route
 from django.core import serializers
 from django.http import JsonResponse,QueryDict
+from django.forms.models import model_to_dict
+from Enso.app.controllers.logic.review_management import averageRatingCalculator
 
 import os
 import sys
@@ -50,4 +52,8 @@ def food_store_listings(request):
 
 @login_required
 def food_store(request,store_id):
-    return HttpResponse(store_id)
+
+    store_dict = model_to_dict(FoodStore.objects.get(pk=store_id))
+    store_dict['num_reviews'],store_dict['store_rating'] =  averageRatingCalculator(store_id)
+    print(FoodStore.objects.get(pk=store_id))
+    return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id)})

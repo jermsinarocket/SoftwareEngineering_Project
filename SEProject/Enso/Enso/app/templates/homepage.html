@@ -160,29 +160,41 @@
           processData: false,
           success : function(json) {
             listingsSpinner(false);
-            console.log(json);
             stores_list = json['stores']
 
 
             if(stores_list.length === 0){
-              console.log('empty')
+              storesList_div.innerHTML += "<div class='row justify-content-center p-t-50'><img style='width:30%;height:auto;' src='{% static 'images/no-search-result.svg' %}'></img></div>" +
+                                          "<div class='row justify-content-center'><span class='fs-20 bold'>Couldn't Find Results for your Selected Filters</span></div>" +
+                                          "<div class='row justify-content-center'><span class='fs-16 italic'>Let's try a different cusine or store.</span></div>"
             }else{
               var storesList_div_innerHTML = ""
               storesList_div = document.getElementById("storesList")
               storesList_div_innerHTML += "<div class='row'>"
 
               stores_list.forEach(function (store, index) {
-                storesList_div_innerHTML += "<div class='col-md-4 m-b-8' style='padding-right:0;padding-left:10'>" +
-                                              "<div class='card border-light'>"+
-                                                "<img class='card-img-top' src='" + store['store_image'] +"'style='height: 22vh;'>"  +
-                                                "<div class='container p-t-5'style='padding-left:30px'><div class='row'>" +
-                                                "<div class='col-sm-9' style='padding-left:0'><h5 class='card-title'>"+ store['store_name']+"</h5></div>"+
-                                                "<div class='col-sm-3' style='padding-left:0;padding-top:5'><span class='label label-default float-right fs-10' style='background-color:#666;color:white'>"+ store['cuisine_type'] +"</span></div></div>"+
-                                                "<div class='row'><span class='italic'>" + store['hawker_centre'] +"</span></div>"+
-                                                "<div class='row' style='padding-top:3'><span class='italic fs-11'><i class='fa fa-road' style='color:#212529'></i>" + store['distance'] + "   <i class='fa fa-car' style='color:#212529'></i>  " + store['duration'] +"</span></div>" +
-                                                "<a href='store/"+ store['id'] +"' class='stretched-link'></a></div>" +
-                                              "</div>" +
-                                             "</div>"
+
+                  storesList_div_innerHTML += "<div class='col-md-4 m-b-8' style='padding-right:0;padding-left:10'>" +
+                                                "<div class='card border-light'>"+
+                                                  "<img class='card-img-top' src='" + store['store_image'] +"'style='height: 22vh;'>"  +
+                                                  "<div class='container p-t-5'style='padding-left:30px'><div class='row'>" +
+                                                  "<div class='col-sm-9' style='padding-left:0'><h5 class='card-title'>"+ store['store_name']+"</h5></div>"+
+                                                  "<div class='col-sm-3' style='padding-left:0;padding-top:5'><span class='label label-default float-right fs-10' style='background-color:#666;color:white'>"+ store['cuisine_type'] +"</span></div></div>"+
+                                                  "<div class='row'><span class='italic'>" + store['hawker_centre'] +"</span></div>"+
+                                                  "<div class='row' style='padding-top:3 padding-bottom::10'><div class='col><span class='italic fs-11'><i class='fa fa-road' style='color:#212529'></i>" + store['distance'] + "   <i class='fa fa-car' style='color:#212529'></i>  " + store['duration'] +"</span></div><div class='col align-self-end text-right'>"
+                  for (i = 0; i < 5; i++) {
+                    if(i < store['store_rating']){
+                      storesList_div_innerHTML += "<i class='fa fa-star' style='color:#ffe108; font-size:15px'></i>";
+                    }else{
+                      storesList_div_innerHTML += "<i class='fa fa-star' style='font-size:15px'></i>";
+                    }
+
+                  }
+                  if(store['num_reviews'] > 0) storesList_div_innerHTML += '<span class="fs-15">(' + store['num_reviews'] +')</span>'
+                  storesList_div_innerHTML +=     "</div></div>" +
+                                                  "<a href='../store/"+ store['id'] +"' class='stretched-link'></a></div>" +
+                                                "</div>" +
+                                               "</div>"
 
                 if((index+1)%3 === 0){
                   storesList_div_innerHTML += "</div><div class='row'>"

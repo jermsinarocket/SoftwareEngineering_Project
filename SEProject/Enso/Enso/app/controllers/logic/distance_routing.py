@@ -2,6 +2,8 @@ import bisect
 import googlemaps
 from django.forms.models import model_to_dict
 from Enso.app.controllers.logic.geocoder import getDistance
+from django.db.models.query_utils import Q
+from Enso.app.controllers.logic.review_management import averageRatingCalculator
 
 def route(stores_qdict,user_latitude,user_longitude):
     origin = [{"lat": user_latitude, "lng": user_longitude}]
@@ -28,6 +30,8 @@ def route(stores_qdict,user_latitude,user_longitude):
         store_dict['zipcode'] = store.hawker_centre.zip_code.zipcode
         store_dict['store_image'] = store.get_storepic_url()
         store_dict['cuisine_type'] = store.cuisine_type.category_name
+        store_dict['num_reviews'],store_dict['store_rating'] =  averageRatingCalculator(store.id)
+
 
         index_inserted = bisect.bisect(distance_list, distance_value)
         bisect.insort(distance_list,distance_value)
