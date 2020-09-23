@@ -10,8 +10,6 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/util.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Semantic-UI/semantic.min.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
-
 
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Applozic/public/plugin/css/app/sidebox/applozic.combined.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Applozic/public/plugin/css/app/sidebox/applozic.sidebox.css" %}">
@@ -25,6 +23,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Loading-Mask/app.min.css" %}">
     <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
 
+
     <script type="text/javascript">
   	var $original;
   	if (typeof jQuery !== 'undefined') {
@@ -37,15 +36,21 @@
     <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
     <script src="{% static "vendor/Loading-Mask/app.js" %}"></script>
     <script src="{% static "vendor/Applozic/public/plugin/js/jquery.min.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCKYnwgeoP-2ovBzcN8veUZzDN6SrYv1t0"></script>
     <script src="{% static "vendor/bootstrap/js/popper.js" %}"></script>
+    <script src="{% static "vendor/bootstrap/js/bootstrap-input-spinner.js" %}"></script>
     <script src="{% static "vendor/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
     <script src="{% static "vendor/Customizable-Badges/jquery.badge.js" %}"></script>
 
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
+    <link href="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+
+
     <script>
       $(document).ready(function() {
-
         $('.pop-up-tooltip').popup({transition:'Fade Up'});
       });
     </script>
@@ -89,20 +94,79 @@
             <span class='fs-15'><a href="{% url 'homepage' %}" style="font-size:15px;">Home</a> > {{store.store_name}}</span>
           </div>
           <div class="row">
-            <span class='bold fs-30'>{{ store.store_name}}</span>
+            <div class="col-9" style="padding:0">
+              <span class='bold fs-30'>{{ store.store_name}}</span>
+            </div>
+            <div class="col-3" style="padding:0;margin-left:-30;margin-top:20">
+              <span class='label label-default fs-10' style='background-color:#666;color:white;margin-left:-50px'>{{store.cuisine_type.category_name}}</span>
+            </div>
+          </div>
+          <div class="row">
+            {% for i in "12345" %}
+              {% if forloop.counter <= store.get_average_rating %}
+                <i class='fa fa-star' style='color:#ffe108; font-size:18px'></i>
+              {% else %}
+                <i class='fa fa-star' style='font-size:18px'></i>
+              {% endif %}
+            {% endfor %}
+            {% if store.get_total_num_reviews > 0 %}
+            <span class="fs-13" style="line-height:18px">({{ store.get_total_num_reviews }})</span>
+            {% else %}
+            <span class="fs-13 italic" style="line-height:18px">No reviews given yet</span>
+            {% endif %}
+            <span class='italic fs-13 p-l-30'><i class='fa fa-road' style='color:#212529'></i> {{distance}}&nbsp;</span>
+            <span class='italic fs-13 p-l-3'><i class='fa fa-car' style='color:#212529'></i> {{duration}}</span>
+          </div>
+          <div class="row p-t-3">
+            <span class='bold fs-12'style="color:#676767">#{{store.unit_number}},&nbsp;{{store.hawker_centre.zip_code.address}}<span class="italic">&nbsp;({{store.hawker_centre.centre_name}} - {{store.hawker_centre.get_centre_type_display}})</span></span>
+          </div>
+          <div class="row p-t-5">
+            <div class="col-3" style="padding:0">
+              <span class='bold fs-15'> Opening Hours</span>
+            </div>
+            <div class="col-m-auto">
+            {% for hours in store.opening_hours.all %}
+             <div class="row" style="margin-bottom:-20px">
+               <div class="col-5">
+                 <span class="fs-14" style="color:#676767">{{hours.get_weekday_display}}     </span>
+               </div>
+               <div class="col-7">
+               {{ hours.from_hour}} - {{ hours.to_hour}}
+               </div>
+            </div>
+               <br>
+            {% endfor %}
+            </div>
+          </div>
+          <div class="row p-t-3">
+            <span class='bold fs-15'>Payment Modes&nbsp;&nbsp;</span>
+            <i class="fa fa-money fs-15" style="line-height:1.8;color:green"></i>
+            {% if store.cashless_payment %}
+            &nbsp;<i class="fa fa-credit-card fs-15" style="line-height:1.8;color:grey"></i>
+            {% endif %}
           </div>
         </div>
         <div class='col'>
-          <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"style="width:70%;float:right;">
+          <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false" style="width:70%;float:right;">
             <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+              {% for pic in store.get_store_pics %}
+              {% if forloop.counter0 == 0 %}
+                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" class="active"></li>
+              {% else %}
+                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}"></li>
+              {% endif %}
+              {% endfor  %}
             </ol>
             <div class="carousel-inner">
+              {% for pic in store.get_store_pics reversed %}
+              {% if forloop.counter == 1 %}
               <div class="carousel-item active">
-                <img src='{{ store.get_storepic_url}}' style="width:100%;"></img>
+              {% else %}
+              <div class="carousel-item">
+              {% endif %}
+                <img src='https://res.cloudinary.com/hgdcwue1c/image/upload/v1/{{pic.public_id}}.{{pic.format}}' style="width:378px;height:252px;"></img>
               </div>
+              {% endfor %}
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style='background-color:#808080;'>
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -116,12 +180,119 @@
 
         </div>
       </div>
-
+      <div class="container">
+        <div class="row">
+          <div class="col-4 host-gathering-col">
+    				<form id="host-gathering-form">
+              <span class='centre bold fs-20'>
+                BE A HOST
+              </span>
+              <div class='row'>
+                <span class="bold m-l-r-auto fs-14 p-t-10">Gathering Name</span>
+              </div>
+              <div class='row p-t-5'>
+                <div class="wrap-input-host">
+                  <input class="input-host" type="text" name="gathering_name"  autocapitalize="none"  maxlength="150" required id="id_gathering_name" >
+      						<!--<input id="username" class="input100" type="text">-->
+      					</div>
+              </div>
+              <div class='row'>
+                <span class="bold m-l-r-auto fs-14 p-t-10">Number of Pax</span>
+              </div>
+              <div class='row p-t-5'>
+                <div class="wrap-input-host">
+                    <input class="input-host" type="number" value="1" min="1" max="5" step="1"/>
+                </div>
+              </div>
+              <div class='row'>
+                <span class="bold m-l-r-auto fs-14 p-t-10">Date</span>
+              </div>
+              <div class='row p-t-5'>
+                <div class="wrap-input-host">
+                    <input class="input-host" type='text' class="form-control" id='gatheringDate' />
+                </div>
+              </div>
+              <div class='row'>
+                <span class="bold m-l-r-auto fs-14 p-t-10">Time</span>
+              </div>
+              <div class='row p-t-5 p-b-15'>
+                <div class="wrap-input-host">
+                    <input class="input-host" type='text' class="form-control" id='gatheringTime' />
+                </div>
+              </div>
+              <div class='row p-t-5 p-b-25'>
+                <button class="signup100-form-btn" type=submit id='host-gathering-btn' style="width:50%;height:30px;margin:auto;">
+                  HOST
+                </button>
+              </div>
+    				</form>
+          </div>
+          <div class="col">
+            <nav class="p-t-20">
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-join-tab" data-toggle="tab" href="#nav-join" role="tab" aria-controls="nav-join" aria-selected="false">Join a Gathering</a>
+                <a class="nav-item nav-link" id="nav-direction-tab" data-toggle="tab" href="#nav-direction" role="tab" aria-controls="nav-direction" aria-selected="false">Directions</a>
+                <a class="nav-item nav-link" id="nav-nearby-tab" data-toggle="tab" href="#nav-nearby" role="tab" aria-controls="nav-nearby" aria-selected="false">Nearby Stores</a>
+              </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show activte" id="nav-join" role="tabpanel" aria-labelledby="nav-join-tab"></div>
+              <div class="tab-pane fade" id="nav-nearby" role="tabpanel" aria-labelledby="nav-nearby-tab">
+              </div>
+              <div class="tab-pane fade" id="nav-direction" role="tabpanel" aria-labelledby="nav-direction-tab">
+                <iframe
+                  width="100%"
+                  height="450"
+                  frameborder="0" style="border:0"
+                  src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCKYnwgeoP-2ovBzcN8veUZzDN6SrYv1t0
+                    &origin={{user.profile.zip_code.latitude}},{{user.profile.zip_code.longitude}}
+                    &destination={{ store.store_name}},#{{store.unit_number}},{{store.hawker_centre.zip_code.address}}" allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <span id="chat-unread-count" class="chat-launcher-icon" ></span>
     <script>
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom');
+    $('#gatheringDate').datetimepicker({
+      minDate:new Date(),
+      format: 'DD/MM/YYYY',
+      viewMode: 'days',
+      icons: {
+          time: "fa fa-clock-o",
+          date: "fa fa-calendar",
+          up: "fa fa-arrow-up",
+          down: "fa fa-arrow-down",
+          previous: "fa fa-chevron-left",
+          next: "fa fa-chevron-right",
+          today: "fa fa-clock-o",
+          clear: "fa fa-trash-o"
+      }
+    });
+
+    $('#gatheringTime').datetimepicker({
+      minDate:new Date(),
+      format:'HH:mm',
+      inline:true,
+      toolbarPlacement:'bottom',
+      icons: {
+          time: "fa fa-clock-o",
+          date: "fa fa-calendar",
+          up: "fa fa-arrow-up",
+          down: "fa fa-arrow-down",
+          previous: "fa fa-chevron-left",
+          next: "fa fa-chevron-right",
+          today: "fa fa-clock-o",
+          clear: "fa fa-trash-o"
+      }
+    });
+    $('#gatheringTime').blur()
+    $("input[type='number']").inputSpinner({groupClass: "width-fixed"});
+
     </script>
 
     <script src="{% static "vendor/Applozic/public/plugin/js/app/modules/applozic.jquery.js" %}"></script>
@@ -164,9 +335,25 @@
             if (response === "success") {
                console.log('login successful, perform your actions if any, for example: load contacts, getting unread message count, etc')
                $("#mck-sidebox-launcher").prepend("<span id='unread-count' class='bold fs-16 dis-none' ></span>")
+               /*
+               $applozic.fn.applozic('createGroup', {'groupName' : '{{store.store_name}}({{store.hawker_centre.centre_name}})',   // required
+                                                 'type' : 2,                // 1 for private , 2 for public, 5 for broadcast (required)
+                                                 'imageUrl': '{{ store.get_storepic_url }}',
+                                                 'users': [{ userId:{{user.profile.id}},
+                                                             groupRole : 1  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
+                                                           }],
+                                                          'callback' : function(response){console.log(response);}})
+
+               $applozic.fn.applozic('updateGroupInfo', {'groupId' : 47235857,
+                                    'imageUrl' : '{{ store.get_storepic_url }}',
+                                    'callback' : function(response){console.log(response);}});
+              */
+
             }
         }
      });
+
+
 
     </script>
 

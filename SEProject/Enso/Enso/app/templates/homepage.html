@@ -192,7 +192,7 @@
                   }
                   if(store['num_reviews'] > 0) storesList_div_innerHTML += '<span class="fs-15">(' + store['num_reviews'] +')</span>'
                   storesList_div_innerHTML +=     "</div></div>" +
-                                                  "<a href='../store/"+ store['id'] +"' class='stretched-link'></a></div>" +
+                                                  "<a href='../store/"+ store['id'] +"?d=" +  store['distance'] + "&t=" + store['duration'] + "' class='stretched-link'></a></div>" +
                                                 "</div>" +
                                                "</div>"
 

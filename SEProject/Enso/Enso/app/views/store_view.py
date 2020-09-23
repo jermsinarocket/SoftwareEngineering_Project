@@ -52,8 +52,4 @@ def food_store_listings(request):
 
 @login_required
 def food_store(request,store_id):
-
-    store_dict = model_to_dict(FoodStore.objects.get(pk=store_id))
-    store_dict['num_reviews'],store_dict['store_rating'] =  averageRatingCalculator(store_id)
-    print(FoodStore.objects.get(pk=store_id))
-    return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id)})
+    return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id),'duration':request.GET.get('t'),'distance':request.GET.get('d')})

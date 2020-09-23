@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
+from Enso.app.controllers.logic.review_management import averageRatingCalculator
 
 from Enso.app.controllers.logic.cloudinary import getImageURL,getImageList
 
@@ -24,10 +25,16 @@ class FoodStore(models.Model):
         app_label = "Enso"
 
     def get_storepic_url(self):
-        return getImageURL(self.store_image,"jpg","Food Stores/")
+        return getImageURL(self.store_image,"jpg","Food Stores/store-" + str(self.id) + "/")
 
     def get_store_menu(self):
-        return getImageURL(self.store_menu,"pdf","Food Stores/")
+        return getImageURL(self.store_menu,"pdf","Food Stores/store-" + str(self.id) + "/")
 
     def get_store_pics(self):
         return getImageList(self.id)
+
+    def get_average_rating(self):
+        return averageRatingCalculator(self.id)[1]
+
+    def get_total_num_reviews(self):
+        return averageRatingCalculator(self.id)[0]

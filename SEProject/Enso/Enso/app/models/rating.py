@@ -1,6 +1,4 @@
 from django.db import models
-from Enso.app.models.profile import Profile
-from Enso.app.models.food_store import FoodStore
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
