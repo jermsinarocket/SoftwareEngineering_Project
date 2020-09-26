@@ -3,7 +3,7 @@ import googlemaps
 from django.forms.models import model_to_dict
 from Enso.app.controllers.logic.geocoder import getDistance
 from django.db.models.query_utils import Q
-from Enso.app.controllers.logic.review_management import averageRatingCalculator
+from Enso.app.controllers.logic.store_management import averageRatingCalculator
 
 def route(stores_qdict,user_latitude,user_longitude):
     origin = [{"lat": user_latitude, "lng": user_longitude}]

@@ -19,7 +19,6 @@ from Enso.app.controllers.logic.distance_routing import route
 from django.core import serializers
 from django.http import JsonResponse,QueryDict
 from django.forms.models import model_to_dict
-from Enso.app.controllers.logic.review_management import averageRatingCalculator
 
 import os
 import sys
@@ -53,3 +52,8 @@ def food_store_listings(request):
 @login_required
 def food_store(request,store_id):
     return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id),'duration':request.GET.get('t'),'distance':request.GET.get('d')})
+
+@login_required
+def create_gathering(request):
+    print(request.POST)
+    return JsonResponse({"true":'true'})

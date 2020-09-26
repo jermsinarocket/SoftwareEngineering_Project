@@ -55,19 +55,5 @@ def homepage(request):
                                         zip_code = zipcode,
                                         centre_type=type_of_centre)
     '''
-    #print(request.user.profile.first_name)
-    #foodCat = FoodCategory.objects.get(category_name='Korean')
-
-    #for obj in FoodPreferences.objects.filter(food_category_id=3):
-    #    print(obj.user_profile.first_name)
-    ##for cat in allFoodCats:
-    #    print(cat.category_name)
-    #Check Exists
-    #print(FoodPreferences.objects.filter(user_profile=userProfile,food_category=foodCat).exists())
-
-    #food_preferences = FoodPreferences.objects.create(user_profile=userProfile,food_category=foodCat)
-    #print(food_preferences)
-    #for row in FoodPreferences.objects.filter(user_profile=userProfile):
-    #    print(row.food_category.category_name)
 
     return render(request, 'homepage.html', {'food_categories':food_categories})

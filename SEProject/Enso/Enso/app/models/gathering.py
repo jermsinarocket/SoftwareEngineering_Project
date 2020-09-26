@@ -11,6 +11,8 @@ class Gathering(models.Model):
     food_store = models.ForeignKey(FoodStore, null=True,blank=True, related_name='gathering',on_delete=models.CASCADE)
     date = models.DateField(_("Date"),default=date.today)
     start_time = models.TimeField()
+    no_pax = models.IntegerField(null=True,blank=True)
+    chat_id = models.TextField(null=True,blank=True)
 
     class Meta:
         app_label = "Enso"

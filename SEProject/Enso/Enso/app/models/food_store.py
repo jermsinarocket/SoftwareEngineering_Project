@@ -5,10 +5,9 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
-from Enso.app.controllers.logic.review_management import averageRatingCalculator
-
+from Enso.app.controllers.logic.store_management import averageRatingCalculator,openingDays,openingHours
 from Enso.app.controllers.logic.cloudinary import getImageURL,getImageList
-
+import json
 
 class FoodStore(models.Model):
 
@@ -38,3 +37,10 @@ class FoodStore(models.Model):
 
     def get_total_num_reviews(self):
         return averageRatingCalculator(self.id)[0]
+
+    def get_operating_days(self):
+        return openingDays(self.id)
+
+    def get_operating_hours(self):
+        print(openingHours(self.id))
+        return openingHours(self.id)
