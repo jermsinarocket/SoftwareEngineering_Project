@@ -5,6 +5,13 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime,date
 
+STATUS = (
+  ('P', _("Pending")),
+  ('F', _("Full")),
+  ('C', _("Completed")),
+)
+
+
 class Gathering(models.Model):
 
     name = models.TextField(default="Gathering", null=False,blank=False)
@@ -13,6 +20,7 @@ class Gathering(models.Model):
     start_time = models.TimeField()
     no_pax = models.IntegerField(null=True,blank=True)
     chat_id = models.TextField(null=True,blank=True)
+    status = models.CharField(max_length=1,choices= STATUS,default='P')
 
     class Meta:
         app_label = "Enso"

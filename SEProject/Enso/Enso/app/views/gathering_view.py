@@ -14,9 +14,11 @@ from django.forms.models import model_to_dict
 from Enso.app.models.gathering import Gathering
 from Enso.app.models.user_gathering import UserGathering
 from Enso.app.models.food_store import FoodStore
+from django.forms.models import model_to_dict
 import os
 import sys
 import datetime
+import json
 
 @login_required
 def create_gathering(request):
@@ -37,3 +39,24 @@ def create_chat(request):
     gathering.chat_id = request.POST['group_id']
     gathering.save()
     return JsonResponse({'success':'true'})
+
+
+@login_required
+def load_existing_gatherings(request):
+
+    gathering_ids = []
+    now = datetime.datetime.now()
+    gatherings = Gathering.objects.filter(Q(food_store= request.POST['store_id']) & Q(status='P') & ~Q(user_gathering__user_profile__id = request.user.profile.id) & Q(date__gte=now.date())& Q(start_time__gte=now.time()))
+    for gathering in gatherings:
+        gathering_ids.append(gathering.id)
+    return JsonResponse({'gathering_ids':gathering_ids})
+
+
+@login_required
+def request_join_gathering(request):
+    gathering = Gathering.objects.get(id=request.POST['gathering_id'])
+    UserGathering.objects.create(user_profile=request.user.profile,gathering = gathering,member_type='M',status='R')
+    host_qdict = UserGathering.objects.filter(Q(gathering__id = request.POST['gathering_id']) & Q(member_type='H')).values('user_profile')
+    for host in host_qdict:
+        host_id = host['user_profile']
+    return JsonResponse({'host_id':host_id,'gathering_name':gathering.name})
