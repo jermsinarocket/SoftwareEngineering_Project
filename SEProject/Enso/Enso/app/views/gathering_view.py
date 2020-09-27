@@ -46,7 +46,7 @@ def load_existing_gatherings(request):
 
     gathering_ids = []
     now = datetime.datetime.now()
-    gatherings = Gathering.objects.filter(Q(food_store= request.POST['store_id']) & Q(status='P') & ~Q(user_gathering__user_profile__id = request.user.profile.id) & Q(date__gte=now.date())& Q(start_time__gte=now.time()))
+    gatherings = Gathering.objects.filter(Q(food_store= request.POST['store_id']) & Q(status='P') & ~Q(user_gathering__user_profile__id = request.user.profile.id) & ((Q(date=now.date())& Q(start_time__gte=now.time())) | Q(date__gte=now.date())))
     for gathering in gatherings:
         gathering_ids.append(gathering.id)
     return JsonResponse({'gathering_ids':gathering_ids})

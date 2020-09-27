@@ -36,7 +36,7 @@
     <script src="{% static "vendor/Customizable-Badges/jquery.badge.js" %}"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
-    <link href="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
 
 
     <script>
@@ -85,12 +85,7 @@
             <span class='fs-15'><a href="{% url 'homepage' %}" style="font-size:15px;">Home</a> > {{store.store_name}}</span>
           </div>
           <div class="row">
-            <div class="col-9" style="padding:0">
-              <span class='bold fs-30'>{{ store.store_name}}</span>
-            </div>
-            <div class="col-3" style="padding:0;margin-left:-30;margin-top:20">
-              <span class='label label-default fs-10' style='background-color:#666;color:white;margin-left:-50px'>{{store.cuisine_type.category_name}}</span>
-            </div>
+              <span class='bold fs-30'>{{ store.store_name}} <span class='label label-default' style='background-color:#666;color:white; font-size:12px;position:relative;top:-5'>{{store.cuisine_type.category_name}}</span></span>
           </div>
           <div class="row">
             {% for i in "12345" %}
@@ -118,10 +113,10 @@
             <div class="col-m-auto">
             {% for hours in store.opening_hours.all %}
              <div class="row" style="margin-bottom:-20px">
-               <div class="col-5">
+               <div class="col-4">
                  <span class="fs-14" style="color:#676767">{{hours.get_weekday_display}}     </span>
                </div>
-               <div class="col-7">
+               <div class="col-8">
                {{ hours.from_hour}} - {{ hours.to_hour}}
                </div>
             </div>
@@ -225,7 +220,7 @@
                 <a class="nav-item nav-link active" id="nav-join-tab" data-toggle="tab" href="#nav-join" role="tab" aria-controls="nav-join" aria-selected="false">Join a Gathering &nbsp; <span onclick="refreshGatherings()" style="cursor:pointer"><i class="fa fa-retweet pop-up-tooltip" data-content="Refresh"></i></span></a>
                 <a class="nav-item nav-link" id="nav-direction-tab" data-toggle="tab" href="#nav-direction" role="tab" aria-controls="nav-direction" aria-selected="false">Directions</a>
                 <a class="nav-item nav-link " id="nav-review-tab" data-toggle="tab" href="#nav-review" role="tab" aria-controls="nav-review" aria-selected="false">Reviews</a>
-                <a class="nav-item nav-link" id="nav-nearby-tab" data-toggle="tab" href="#nav-nearby" role="tab" aria-controls="nav-nearby" aria-selected="false">Nearby Stores</a>
+                <a class="nav-item nav-link" id="nav-nearby-tab" data-toggle="tab" href="#nav-nearby" role="tab" aria-controls="nav-nearby" aria-selected="false">Nearby Stores <span class='italic'>({{store.hawker_centre.centre_name}})</span></a>
               </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -254,7 +249,7 @@
                     <img style='width:15%;height:auto;' src='{% static 'images/alert.png' %}'></img>
                   </div>
                   <div class="row justify-content-center">
-                      <span class="italic fs-18">There are no reviews for {{ store.store_name}} yet ! </span>
+                      <span class="italic fs-18">There are no reviews for {{ store.store_name}} yet! </span>
                   </div>
                   {% else %}
                    {% for review in store.rating.all reversed %}
@@ -293,7 +288,42 @@
                   {% endif %}
                 </div>
               </div>
-              <div class="tab-pane fade" id="nav-nearby" role="tabpanel" aria-labelledby="nav-nearby-tab">
+              <div class="tab-pane fade" id="nav-nearby" role="tabpanel" aria-labelledby="nav-nearby-tab" style='height:400px;overflow-y:scroll;'>
+                <div class='row p-t-5' style='margin-right:0 !important;'>
+                {% for nearby_store in store.hawker_centre.food_store.all %}
+                  {% if nearby_store.id != store.id %}
+                  <div class='col-md-6 m-b-8' style='padding-right:0;'>
+                    <div class='card border-secondary p-b-4'>
+                      <img class='card-img-top' src='{{nearby_store.get_storepic_url}}'style='height: 13vh;'>
+                        <div class='container p-t-5'style='padding-left:20px'>
+                          <div class='row'>
+                            <div class='col-9' style='padding-left:0'>
+                              <h5 class='card-title'>{{nearby_store.store_name}}</h5>
+                            </div>
+                            <div class='col' style='padding-left:0;padding-top:5'>
+                              <span class='label label-default fs-10' style='background-color:#666;color:white'>{{nearby_store.cuisine_type.category_name}}</span>
+                            </div>
+                          </div>
+                          <div class='row p-t-4 p-b-3'>
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= nearby_store.get_average_rating %}
+                                <i class='fa fa-star' style='color:#ffe108; font-size:15px'></i>
+                              {% else %}
+                                <i class='fa fa-star' style='font-size:15px'></i>
+                              {% endif %}
+                            {% endfor %}
+                            {% if nearby_store.get_total_num_reviews > 0 %}
+                            <span class="fs-13" style="line-height:13px">({{ nearby_store.get_total_num_reviews }})</span>
+                            {% else %}
+                            <span class="fs-11 italic" style="line-height:15px">&nbsp;No reviews given yet</span>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <a href="../../store/{{nearby_store.id}}?d={{distance}}&t={{duration}}" class='stretched-link'></a>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -306,6 +336,7 @@
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom');
 
     $('#gatheringDate').datetimepicker({
+      minDate:new Date(),
       format: 'DD/MM/YYYY',
       viewMode: 'days',
       daysOfWeekDisabled: {{ store.get_operating_days }},
@@ -558,7 +589,7 @@
 
           if(gathering_count == 0 ){
             gathering_list_div.innerHTML += "<div class='row justify-content-center p-t-50'><img style='width:30%;height:auto;' src='{% static 'images/no-search-result.svg' %}'></img></div>" +
-                                        "<div class='row justify-content-center'><span class='fs-20 bold'>There are no gatherings available</span></div>" +
+                                        "<div class='row justify-content-center'><span class='fs-20 bold'>Aiyo, got nobody to eat with</span></div>" +
                                         "<div class='row justify-content-center'><span class='fs-16 italic'>Host a Gathering instead!</span></div>"
           }else{
             gathering_list_div.innerHTML +=  gatheringList_div_innerHTML
@@ -585,7 +616,7 @@
 
           $applozic.fn.applozic('sendMessage', {
                       'to': json['host_id'],           // userId of the receiver
-                      'message' : "Hello, I have sent a request to join " + json['gathering_name'] + "!",     // message to send
+                      'message' : " Hello, I have sent a request to join " + json['gathering_name'] + "!",
                       'type' : 0                  //(optional) DEFAULT(0),
                         });
 
