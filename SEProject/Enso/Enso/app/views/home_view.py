@@ -57,3 +57,7 @@ def homepage(request):
     '''
 
     return render(request, 'homepage.html', {'food_categories':food_categories})
+
+def profilepage(request):
+    # todo: add logic to retrieve user data for display in the profile page!
+    return render(request, "profilepage.html")
