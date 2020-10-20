@@ -9,11 +9,15 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail
-from Enso.app.models.profile import Profile
+
+# model imports
 from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.food_preferences import FoodPreferences
 from Enso.app.models.zipcode import Zipcode
 from Enso.app.models.hawker_centre import HawkerCentre
+from Enso.app.models.profile import Profile
+from Enso.app.models.gathering import Gathering
+from Enso.app.models.user_gathering import UserGathering
 
 import os
 import sys
@@ -58,6 +62,24 @@ def homepage(request):
 
     return render(request, 'homepage.html', {'food_categories':food_categories})
 
+@login_required
 def profilepage(request):
-    # todo: add logic to retrieve user data for display in the profile page!
-    return render(request, "profilepage.html")
+    # get user profile data of current user
+    uid = request.user.id
+    userProfile = Profile.objects.get(user_id= uid)
+    user = User.objects.get(id=uid)
+
+    # get gatherings of current user
+    filteredgatherings = UserGathering.objects.filter(user_profile_id = uid)
+    gatherings = []
+    for i in filteredgatherings:
+        gatherings.append(i.gathering)
+    
+    print(len(gatherings))
+
+
+    # add this data into args dict
+    args= {'profile': userProfile, 'user': user, 'gatherings': gatherings}
+
+    # render
+    return render(request, "profilepage.html", args)

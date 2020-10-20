@@ -109,7 +109,7 @@
                     <div class="col-md-4" style="">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 style="" class="text-center"><b>5</b></h5>
+                                <h5 style="" class="text-center"><b>Lv. {{profile.get_level_id}}</b></h5>
                             </div>
                         </div>
                         <div class="row">
@@ -129,13 +129,13 @@
                     </div>
                     <div class="px-md-5 d-flex flex-column align-items-start justify-content-start p-2 col-md-5"
                         style="">
-                        <h1>Hayley Teo</h1>
-                        <p class="mb-3 lead">hayleyhey07</p>
+                        <h1>{{profile.get_full_name}}</h1>
+                        <p class="mb-3 lead">{{profile.get_user}}</p>
                         <p class="mb-3 lead">Food enthusiast! Excited to meet new people and explore new food :)</p>
                         <div class="row">
                             <div class="col-md-2" style=""><i class="fa fa-envelope-o fa-lg"></i></div>
                             <div class="col-md-6 " style="">
-                                <p class="mb-2" style="">hayleyhey@gmail.com</p>
+                                <p class="mb-2" style="">{{user.email}}</p>
                             </div>
                         </div>
                     </div>
@@ -174,19 +174,15 @@
                                     <h6 class="card-title"><b>Your Past Gatherings</b></h6>
 
                                     <!-- Start of one past gathering -->
-                                    <h6 class="card-subtitle my-2 text-muted">Eat&amp;Chill</h6>
-                                    <p class="card-text float-left">@ Grilled Goodness, 6 Sep</p>
+                                    {% for i in gatherings %}
+                                    <h6 class="card-subtitle my-2 text-muted">{{i.name}}</h6>
+                                    <p class="card-text float-left">@ {{i.get_foodstore.get_store_name}}, {{i.get_date}}</p>
                                     <p class="card-text float-right"><i class="fas fa-star"></i> 4/5</p>
                                     <div class="clearfix"></div>
-                                    <hr class="mt-0"/>
+                                    {%if not forloop.last %}<hr class="mt-0"/>{%endif%}
+                                    {% endfor %}
                                     <!-- End of one past gathering -->
 
-                                    <!-- Start of one past gathering -->
-                                    <h6 class="card-subtitle my-2 text-muted">Team Enso</h6>
-                                    <p class="card-text float-left">@ Mandu Delights, 20 Aug</p>
-                                    <p class="card-text float-right"><i class="fas fa-star"></i> 5/5</p>
-                                    <div class="clearfix"></div>
-                                    <!-- End of one past gathering -->
                                 </div>
                             </div>
                         </div>

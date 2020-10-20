@@ -39,6 +39,12 @@ class Profile(models.Model):
 
     def get_profile_url(self):
         return getImageURL(self.profile_pic,'jpg')
+    
+    def get_user(self):
+        return self.user
+
+    def get_level_id(self):
+        return self.current_level.id
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

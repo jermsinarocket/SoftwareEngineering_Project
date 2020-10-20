@@ -44,3 +44,6 @@ class FoodStore(models.Model):
     def get_operating_hours(self):
         print(openingHours(self.id))
         return openingHours(self.id)
+
+    def get_store_name(self):
+        return self.store_name
