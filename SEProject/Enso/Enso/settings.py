@@ -5,6 +5,7 @@ Django settings for Enso project.
 from pathlib import Path
 import os
 import dj_database_url
+import livesync
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api

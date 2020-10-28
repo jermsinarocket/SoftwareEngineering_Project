@@ -38,7 +38,7 @@
     <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
     <script src="{% static "vendor/Loading-Mask/app.js" %}"></script>
     <script src="{% static "vendor/Applozic/public/plugin/js/jquery.min.js" %}"></script>
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCKYnwgeoP-2ovBzcN8veUZzDN6SrYv1t0"></script>
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyDDCVt_rTIk3xHjMY5OTtKb7TvEzPqOD4U"></script>
     <script src="{% static "vendor/bootstrap/js/popper.js" %}"></script>
     <script src="{% static "vendor/bootstrap/js/bootstrap.min.js" %}"></script>
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
@@ -239,7 +239,7 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item" style="text-align:right;">
-              <a class="nav-link fs-20" href="#"><i class='pop-up-tooltip bx bxs-group bx-border bx-tada-hover bx-sm' data-content="Manage your Gatherings"></i></a>
+              <a class="nav-link fs-20" href="{% url 'gathering_page' %}"><i class='pop-up-tooltip bx bxs-group bx-border bx-tada-hover bx-sm' data-content="Manage your Gatherings"></i></a>
             </li>
             <!--
             <li class="nav-item"  style="text-align:right;">
@@ -371,7 +371,7 @@
     <script type="text/javascript">
 
       window.applozic.init({
-        appId: '33475016416a3cf577d8e5161ca4cc32',      //Get your App ID from https://www.applozic.com
+        appId: '3078042d7c9d5ae7b2abd9029b0054991',      //Get your App ID from https://www.applozic.com
         userId: {{user.profile.id}},                     //Logged in user's id, a unique identifier for user
         userName: '{{user.profile.first_name}}',                 //User's display name
         imageLink : '{{user.profile.ge1t_profile_url}}',                     //User's profile picture url

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.query_utils import Q
 from Enso.app.models.food_store import FoodStore
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -24,3 +25,23 @@ class Gathering(models.Model):
 
     class Meta:
         app_label = "Enso"
+
+    def getRemainingPax(self):
+        return self.no_pax - self.getCurrentPax()
+
+    def getCurrentPax(self):
+        gatherings = Gathering.objects.all()
+        return len(gatherings.filter(Q(user_gathering__gathering = self.id) & Q(user_gathering__status='J')))
+
+    def getPendingSelected(self,status):
+        gatherings = Gathering.objects.all()
+        num_requests = len(gatherings.filter(Q(user_gathering__gathering = self.id) & Q(user_gathering__status = status)))
+        if num_requests == 0:
+            return "No"
+        return num_requests
+
+    def getPendingInvites(self):
+        return self.getPendingSelected("I")
+
+    def getPendingRequests(self):
+        return self.getPendingSelected("R")

@@ -39,7 +39,7 @@ def route(stores_qdict,user_latitude,user_longitude):
         store_list.insert(index_inserted,store_dict)
 
         count+=1
-        if count==4:
+        if count==5:
             break
 
     return store_list

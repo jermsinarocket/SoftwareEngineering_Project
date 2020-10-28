@@ -1,0 +1,424 @@
+<html lang="en">
+  <head>
+    {% load static %}
+    {% load cloudinary %}
+    <title>Enso</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="{% static 'images/icons/favicon.ico' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/util.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Semantic-UI/semantic.min.css" %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Applozic/public/plugin/css/app/sidebox/applozic.combined.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Applozic/public/plugin/css/app/sidebox/applozic.sidebox.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Applozic/public/plugin/css/app/sidebox/viewer.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/topper/topper.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "fonts/font-awesome-4.7.0/css/font-awesome.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/css-hamburgers/hamburgers.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/animsition/css/animsition.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "fonts/Linearicons-Free-v1.0.0/icon-font.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Customizable-Badges/jquery.badge.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/Loading-Mask/app.min.css" %}">
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
+    <script src="{% static "vendor/Applozic/public/plugin/js/jquery.min.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyDDCVt_rTIk3xHjMY5OTtKb7TvEzPqOD4U"></script>
+    <script src="{% static "vendor/bootstrap/js/popper.js" %}"></script>
+    <script src="{% static "vendor/bootstrap/js/bootstrap-input-spinner.js" %}"></script>
+    <script src="{% static "vendor/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "vendor/topper/topper.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
+    <script src="{% static "vendor/Customizable-Badges/jquery.badge.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+
+
+    <script>
+
+      $(document).ready(function() {
+        $('.pop-up-tooltip').popup({transition:'Fade Up'});
+        loadMainGatheringContainer('host_gathering_all');
+
+      });
+
+
+
+      function loadMainGatheringContainer(target_id){
+        $('#main-gathering-container').empty()
+        $("#main-gatherings-spinner").removeClass('dis-none')
+        $("#main-gatherings-spinner").busyLoad("show", {
+          spinner: "cubes",
+          color: "black",
+          background: 'black',
+          maxSize: "100px",
+          minSize: "20px",
+        });
+        $(".menu").children(".active").removeClass("active");
+        $("#" + target_id).addClass("active");
+
+        eval(target_id + '();');
+        $("#main-gatherings-spinner").busyLoad("hide", {});
+      }
+
+      function host_gathering_all(){
+
+        var main_gathering_container = document.getElementById("main-gathering-container")
+        var gathering_count = 0;
+        var main_gathering_container_innerHTML = ""
+        main_gathering_container_innerHTML += "<div class='row p-t-10'>"
+        {% for user_gathering in user.profile.user_gathering.all %}
+          {% if user_gathering.member_type == 'H' and user_gathering.gathering.status != 'C' %}
+
+            main_gathering_container_innerHTML += '<div class="col-5 m-b-8" id="gathering_all_{{user_gathering.gathering.id}}">' +
+                                                    '<div class="card" style="width: 22rem;">' +
+                                                      '<img class="card-img-top" src="{{user_gathering.gathering.food_store.get_storepic_url}}"  style="opacity:0.8;">' +
+                                                      '<div class="card-body">' +
+                                                          '<h5 class="card-title">{{user_gathering.gathering.name}}' +
+                                                          '<span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></span>' +
+                                                          '<span class="card-text fs-18 " onclick="editGatheringPax({{user_gathering.gathering.id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm"></i></span></h5>' +
+                                                          '<p class="card-text">Where?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                          '<p class="card-text style="margin-top:-5">When?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                          '<p class="card-text" style="margin-top:-5">Who?</p>' +
+                                                          '<div class="row card-text" style="margin-top:-10">'
+
+          {% for member in user_gathering.gathering.user_gathering.all %}
+
+           if('{{member.status}}' === "J"){
+              main_gathering_container_innerHTML += "<div class='col-sm-2' >" +
+                                                      "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                    "</div>"
+           }
+           {% endfor %}
+
+           for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
+            main_gathering_container_innerHTML +=   "<div class='col-sm-2'>" +
+                                                      "<img class='avatar-tooltip' data-content='Empty Spot!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;'></img>" +
+                                                    "</div>"
+
+            }
+
+            main_gathering_container_innerHTML += '</div><p class="card-text italic m-t-5"><span class ="bold">{{user_gathering.gathering.getPendingInvites}}</span> Pending Invites' +
+                                                  '<br><span class = "bold">{{user_gathering.gathering.getPendingRequests}}</span> Pending Requests</p>'
+
+            main_gathering_container_innerHTML +=  '</div>' +
+                                                     '<div class="card-footer text-center">'+
+                                                       '<button class="btn btn-danger btn-sm float-left" style="color:white" onclick="confirm_delete_gathering({{user_gathering.gathering.id}})">Cancel Gathering</button>'+
+                                                       '<button class="btn btn-primary btn-sm float-right" style="color:white"  data-toggle="modal" data-target="#manageMemberModal" data-whatever="{{user_gathering.gathering.id}}">Manage Members</button>'+
+                                                     '</div>'+
+                                                  '</div>' +
+                                                '</div>'
+
+
+           if((gathering_count+1)%2 === 0){
+             main_gathering_container_innerHTML += "</div><div class='row p-t-5'>"
+           }
+            gathering_count+=1;
+
+
+          {% endif %}
+        {% endfor %}
+        main_gathering_container.innerHTML += main_gathering_container_innerHTML;
+        $('.avatar-tooltip').popup();
+      }
+
+      $(document).on('show.bs.modal','#manageMemberModal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var gathering_id = button.data('whatever') // Extract info from data-* attributes
+
+      })
+
+      function host_all_requests(){
+        console.log('here');
+      }
+
+      function participant_joined_gatherings(){
+        console.log('here');
+      }
+
+      function participant_pending_gatherings(){
+        console.log('here');
+      }
+
+      function editGatheringPax(gatheringID){
+        var min_pax = 0;
+        {% for user_gathering in user.profile.user_gathering.all %}
+          if({{user_gathering.gathering.id}} == gatheringID){
+            min_pax = {{user_gathering.gathering.getCurrentPax}}
+          }
+        {% endfor %}
+        if(min_pax == 1){
+          min_pax = 2
+        }
+
+        bootbox.prompt({
+            title: "Edit Number of Pax",
+            inputType: 'number',
+            required:true,
+            min: min_pax,
+            max: 5,
+            callback: function (result) {
+                if(result){
+                  $.ajax({
+                    type : "POST",
+                    url: '{% url "update_pax" %}',
+                    data : {
+                      gathering_id: gatheringID,
+                      num_pax: result
+                    },
+                    success : function(json) {
+                        Topper({
+                          title: '',
+                          text: 'Number of Pax has been successfully updated!',
+                          style: 'success',
+                          type: 'top',
+                          autoclose: true,
+                          autocloseAfter: 5000
+                        });
+
+                        location.reload();
+                    }
+                  });
+                }
+            }
+        });
+      }
+
+
+      function confirm_delete_gathering(gathering_id){
+          bootbox.confirm({
+            message: "Are you sure you want to delete this gathering?",
+            centerVertical: true,
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result){
+                        $.ajax({
+                          type : "POST",
+                          url: '{% url "delete_gathering" %}',
+                          data : {
+                            gathering_id: gathering_id
+                          },
+                          success : function(json) {
+                              deleteGroup(json['chat_id'])
+                              Topper({
+                                title: '',
+                                text: 'Gathering has been successfully deleted',
+                                style: 'success',
+                                type: 'top',
+                                autoclose: true,
+                                autocloseAfter: 5000
+                              });
+
+                              location.reload();
+                          }
+                        });
+                }
+            }
+        });
+      }
+
+    </script>
+  </head>
+  <body>
+    <div class="modal fade" id="manageMemberModal" tabindex="-1" role="dialog" aria-labelledby="manageMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageMemberModalLabel">Manage Members</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="manage_members_body">
+          test
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="container p-t-10">
+      <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <a class="navbar-brand" href="{% url 'homepage' %}">
+          <img src="{% static 'images/logo.png' %}" style="width:49px;" alt="Enso">
+        </a>
+        <button class="navbar-toggler ml-auto " type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item" style="text-align:right;">
+              <a class="nav-link fs-20" href="#"><i class='pop-up-tooltip bx bxs-group bx-border bx-tada-hover bx-sm' data-content="Manage your Gatherings" style="border-color:green"></i></a>
+            </li>
+            <li class="nav-item dropdown"  style="text-align:right;">
+              <a id="profile-pic-icon" class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <img src="{{ user.profile.get_profile_url }}" style="width:35px;height:35px;border-radius:20%"></img>
+              </a>
+              <div class="dropdown-menu slideIn  animate ml-auto" aria-labelledby="navbarDropdownMenuLink">
+                  <a class="dropdown-item" href="{% url 'logout_user' %}" style="padding:.25rem 1rem !important;">
+                    <i class="fa fa-lg fa-user"></i>  View Profile
+                  </a>
+                  <a class="dropdown-item" href="{% url 'logout_user' %}" style="padding:.25rem 1rem !important;">
+                    <i class="fa fa-lg fa-sign-out"></i>  Log Out
+                  </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="row section-divider"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-3">
+          <div class="ui vertical menu" style="font-size:120%;width:16rem;">
+            <div class="item">
+              <div class="header">Host</div>
+              <div class="menu">
+                <a id="host_gathering_all" class="item red item active" onclick="loadMainGatheringContainer('host_gathering_all');">Your Gatherings</a>
+                <a id="host_all_requests" class="item red item" onclick="loadMainGatheringContainer('host_all_requests');">Manage Requests
+                  {% if host_all_request > 0 %}
+                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('host_all_requests');">{{ host_all_request}}</div>
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="header">Participant</div>
+              <div class="menu">
+                <a id='participant_joined_gatherings' class="item red item" onclick="loadMainGatheringContainer('participant_joined_gatherings');">Joined Gatherings</a>
+                <a id='participant_pending_gatherings' class="item red item" onclick="loadMainGatheringContainer('participant_pending_gatherings');">Pending Gatherings
+                  {% if participant_pending_request > 0 %}
+                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('participant_pending_gatherings');">{{participant_pending_request}}</div>
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="main-gatherings-spinner" class="dis-none" style="top:150px"></div>
+          <div id="main-gathering-container" class='container'>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <span id="chat-unread-count" class="chat-launcher-icon" ></span>
+    <script>
+    $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom');
+    </script>
+    <script src="{% static "vendor/Applozic/public/plugin/js/app/modules/applozic.jquery.js" %}"></script>
+    <script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-6.1.min.js"></script>
+    <script src="{% static "vendor/Applozic/public/plugin/js/app/sidebox/applozic.sidebox.js" %}"></script>
+
+    <script>
+    (function(d, m){var s, h;
+       s = document.createElement("script");
+       s.type = "text/javascript";
+       s.async=true;
+       s.src="https://apps.applozic.com/sidebox.app";
+       h=document.getElementsByTagName('head')[0];
+       h.appendChild(s);
+       window.applozic=m;
+       m.init=function(t){m._globals=t;}})(document, window.applozic || {});
+    </script>
+
+    <script type="text/javascript">
+
+      window.applozic.init({
+        appId: '3078042d7c9d5ae7b2abd9029b0054991',      //Get your App ID from https://www.applozic.com
+        userId: {{user.profile.id}},                     //Logged in user's id, a unique identifier for user
+        userName: '{{user.profile.first_name}}',                 //User's display name
+        imageLink : '{{user.profile.ge1t_profile_url}}',                     //User's profile picture url
+        desktopNotification: true,
+        source: '5',                          // optional, WEB(1),DESKTOP_BROWSER(5), MOBILE_BROWSER(6)
+        notificationIconLink: "{% static 'images/icons/favicon.ico' %}",    //Icon to show in desktop notification, replace with your icon
+        notificationSoundLink :"{% static 'vendor/Applozic/public/plugin/audio/notification_tone.mp3' %}",
+        authenticationTypeId: 1,          //1 for password verification from Applozic server and 0 for access Token verification from your server
+        accessToken: '',                    //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+        locShare: true,
+        googleMapScriptLoaded : true,   // true if your app already loaded google maps script
+        autoTypeSearchEnabled : true,     // set to false if you don't want to allow sending message to user who is not in the contact list
+        loadOwnContacts : false, //set to true if you want to populate your own contact list,
+        topicBox:true,
+        disableSelfChat:true,
+        groupUserCount: true,
+        onInit : function(response) {
+            if (response === "success") {
+               console.log('login successful, perform your actions if any, for example: load contacts, getting unread message count, etc')
+               $("#mck-sidebox-launcher").prepend("<span id='unread-count' class='bold fs-16 dis-none' ></span>")
+               /*
+               $applozic.fn.applozic('createGroup', {'groupName' : '{{store.store_name}}({{store.hawker_centre.centre_name}})',   // required
+                                                 'type' : 2,                // 1 for private , 2 for public, 5 for broadcast (required)
+                                                 'imageUrl': '{{ store.get_storepic_url }}',
+                                                 'users': [{ userId:{{user.profile.id}},
+                                                             groupRole : 1  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
+                                                           }],
+                                                          'callback' : function(response){console.log(response);}})
+
+               $applozic.fn.applozic('updateGroupInfo', {'groupId' : 47235857,
+                                    'imageUrl' : '{{ store.get_storepic_url }}',
+                                    'callback' : function(response){console.log(response);}});
+              */
+
+            }
+        }
+     });
+
+     function chat(groupID){
+       $applozic.fn.applozic('loadGroupTab', groupID);
+     }
+
+     function chatIndiv(id){
+       $applozic.fn.applozic('loadTab', id);
+     }
+
+     function deleteGroup(groupID){
+       $applozic.fn.applozic('leaveGroup', {'groupId' : groupID,
+                                    'clientGroupId' : groupID, //use either groupId or clientGroupId
+                                    'callback' :function(response){console.log(response);}
+                                    });
+     }
+
+    </script>
+
+    <script src="{% static "vendor/Loading-Mask/app.js" %}"></script>
+
+    <script>
+    $("#chat-unread-count").on('DOMSubtreeModified', function () {
+      var unread_count = $('#chat-unread-count').text()
+      if(unread_count.length === 0){
+        $("#unread-count").addClass('dis-none')
+      }else{
+        $("#unread-count").removeClass('dis-none')
+        document.getElementById("unread-count").textContent = $('#chat-unread-count').text()
+      }
+
+    });
+
+    </script>
+
+  </body>
+</html>

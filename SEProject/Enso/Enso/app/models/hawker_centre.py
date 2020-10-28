@@ -16,10 +16,7 @@ class HawkerCentre(models.Model):
     centre_name = models.TextField(null=False,blank=False)
     centre_type = models.CharField(max_length=3,choices= CENTRETYPE,default='HC')
     zip_code = models.ForeignKey(Zipcode, null=True,blank=True, related_name='hawker_centre',on_delete=models.CASCADE)
-
-    def get_region(self):
-        return self.get_region_display()
-
+    
     def get_centre_type(self):
         return self.get_centre_type_display()
 
