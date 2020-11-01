@@ -45,7 +45,11 @@
 
       $(document).ready(function() {
         $('.pop-up-tooltip').popup({transition:'Fade Up'});
-        loadMainGatheringContainer('host_gathering_all');
+        var target_id = 'host_gathering_all'
+        if(window.location.search.split('?')[1]){
+          target_id = window.location.search.split('?')[1]
+        }
+        loadMainGatheringContainer(target_id);
 
       });
 
@@ -83,7 +87,8 @@
                                                       '<div class="card-body">' +
                                                           '<h5 class="card-title">{{user_gathering.gathering.name}}' +
                                                           '<span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></span>' +
-                                                          '<span class="card-text fs-18 " onclick="editGatheringPax({{user_gathering.gathering.id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm"></i></span></h5>' +
+                                                          '<span class="card-text fs-18 " onclick="editGatheringPax({{user_gathering.gathering.id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm"></i></span>' +
+                                                          '<span class="card-text fs-18  "data-toggle="modal" data-target="#manageInvitesModal" data-whatever="{{user_gathering.gathering.id}}" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-user-plus bx-border bx-tada-hover bx-sm"></i></span></h5>' +
                                                           '<p class="card-text">Where?</p>'+
                                                           '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.food_store.store_name}} </p>'+
                                                           '<p class="card-text bold" style="margin-top:-13">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
@@ -103,13 +108,22 @@
 
            for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
             main_gathering_container_innerHTML +=   "<div class='col-sm-2'>" +
-                                                      "<img class='avatar-tooltip' data-content='Empty Spot!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;'></img>" +
+                                                      "<img class='avatar-tooltip' data-content='Invite Someone!' data-toggle='modal' data-target='#manageInvitesModal' data-whatever='{{user_gathering.gathering.id}}' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;cursor:pointer;'></img>" +
                                                     "</div>"
 
             }
+            main_gathering_container_innerHTML += '</div>'
+            if({{user_gathering.gathering.getPendingInvites}} > 0){
+                  main_gathering_container_innerHTML += '<p class="card-text italic m-t-5" data-toggle="modal" data-target="#cancelInvitesModal" data-whatever="{{user_gathering.gathering.id}}" style="cursor:pointer"><span class ="bold underline">{{user_gathering.gathering.getPendingInvites}}</span> Pending Invites</p>'
+            }else{
+                  main_gathering_container_innerHTML += '<p class="card-text italic m-t-5"><span class ="bold">No</span> Pending Invites</p>'
+            }
 
-            main_gathering_container_innerHTML += '</div><p class="card-text italic m-t-5"><span class ="bold">{{user_gathering.gathering.getPendingInvites}}</span> Pending Invites' +
-                                                  '<br><span class = "bold">{{user_gathering.gathering.getPendingRequests}}</span> Pending Requests</p>'
+            if({{user_gathering.gathering.getPendingRequests}} > 0){
+                  main_gathering_container_innerHTML += '<p data-toggle="modal" data-target="#manageRequestsModal" data-whatever="{{user_gathering.gathering.id}}" style="margin-top:-15;cursor:pointer"><span class ="bold underline" >{{user_gathering.gathering.getPendingRequests}}</span> Pending Requests</p>'
+            }else{
+                  main_gathering_container_innerHTML += '<p style="margin-top:-15"><span class ="bold">No</span> Pending Requests</p>'
+            }
 
             main_gathering_container_innerHTML +=  '</div>' +
                                                      '<div class="card-footer text-center">'+
@@ -132,15 +146,131 @@
         $('.avatar-tooltip').popup();
       }
 
+      $(document).on('show.bs.modal','#manageRequestsModal', function (event) {
+        var button = $(event.relatedTarget)
+        var gathering_id = parseInt(button.data('whatever'))
+        var manage_requests_container = document.getElementById("manage_requests_body")
+        manage_requests_container.innerHTML = ""
+        manage_requests_container.innerHTML = "<div class='ui cards' style='margin:0'>"
+        var manage_requests_body_innerHTML = ""
+
+        {% for user_gathering in user.profile.user_gathering.all %}
+          if({{user_gathering.gathering.id}} == gathering_id){
+            {% for user in user_gathering.gathering.user_gathering.all %}
+              if("{{user.status}}" == "R"){
+                manage_requests_body_innerHTML +=  '<div class="card" id="cancel-requests-{{user.user_profile.id}}" style="padding:10;margin-bottom:5">'  +
+                                                      '<div class="content">' +
+                                                        '<img class="right floated mini ui image" src="{{user.user_profile.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.user_profile.id}})">' +
+                                                        '<div class="header bold">{{user.user_profile.first_name}}</div>'  +
+                                                      '</div>'  +
+                                                      '<div class="extra content">' +
+                                                        '<div class="ui two buttons mini">' +
+                                                          '<div class="ui basic green button" id="approve_member-'+ gathering_id +'" onclick="approveMember({{user.id}});">Approve</div>' +
+                                                          '<div class="ui basic red button" id="decline_member-'+ gathering_id +'" onclick="declineMember({{user.user_profile.id}});">Decline</div>' +
+                                                        '</div>' +
+                                                      '</div>' +
+                                                  '</div>'
+              }
+            {% endfor %}
+          }
+        {% endfor %}
+        manage_requests_body_innerHTML += '</div>'
+        manage_requests_container.innerHTML += manage_requests_body_innerHTML;
+
+      });
+
+      $(document).on('show.bs.modal','#cancelInvitesModal', function (event) {
+        var button = $(event.relatedTarget)
+        var gathering_id = parseInt(button.data('whatever'))
+        var cancel_invites_container = document.getElementById("cancel_invites_body")
+        cancel_invites_container.innerHTML = ""
+        cancel_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
+        var cancel_invites_body_innerHTML = ""
+
+        {% for user_gathering in user.profile.user_gathering.all %}
+          if({{user_gathering.gathering.id}} == gathering_id){
+            {% for user in user_gathering.gathering.user_gathering.all %}
+              if("{{user.status}}" == "I"){
+                cancel_invites_body_innerHTML +=  '<div class="card" id="cancel-invites-{{user.user_profile.id}}" style="padding:10;margin-bottom:5">'  +
+                                                    '<div class="content">' +
+                                                      '<img class="right floated mini ui image" src="{{user.user_profile.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.user_profile.id}})">' +
+                                                      '<div class="header bold">{{user.user_profile.first_name}}</div>'  +
+                                                    '</div>'  +
+                                                    '<div class="ui bottom attached button" id="cancel-'+ gathering_id +'" onclick="cancelMember({{user.user_profile.id}});">'  +
+                                                      '<i class="remove icon"></i>Cancel Invite'  +
+                                                    '</div>'  +
+                                                  '</div>'
+              }
+            {% endfor %}
+          }
+        {% endfor %}
+        cancel_invites_body_innerHTML += '</div>'
+        cancel_invites_container.innerHTML += cancel_invites_body_innerHTML;
+
+      });
+
       $(document).on('show.bs.modal','#manageMemberModal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var gathering_id = button.data('whatever') // Extract info from data-* attributes
+        var button = $(event.relatedTarget)
+        var gathering_id = parseInt(button.data('whatever'))
+        var manage_members_container = document.getElementById("manage_members_body")
+        manage_members_container.innerHTML = ""
+        var manage_members_body_innerHTML = ""
+        {% for user_gathering in user.profile.user_gathering.all %}
+          if({{user_gathering.gathering.id}} == gathering_id){
+            {% for member in user_gathering.gathering.user_gathering.all %}
+              if("{{member.member_type}}" == "M" && "{{member.status}}" == "J"){
+                manage_members_body_innerHTML += "<div class='row' id='manage_member_row-{{member.user_profile.id}}'>" +
+                                                   "<div class='col'>" +
+                                                    "<img src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                   "</div>" +
+                                                   "<div class='col'>" +
+                                                    '<button id="remove-'+ gathering_id +'" class="btn btn-danger btn-sm m-t-10" style="color:white"  onclick="remove_member({{member.user_profile.id}})" data-whatever="' + gathering_id + '">Remove {{member.user_profile.first_name}}</button>'+
+                                                   "</div>" +
+                                                 "</div><hr id='manage_member_row_divider-{{member.user_profile.id}}'>"
+              }
+            {% endfor %}
+          }
+        {% endfor %}
+
+
+        manage_members_container.innerHTML += manage_members_body_innerHTML;
 
       })
 
-      function host_all_requests(){
-        console.log('here');
-      }
+
+      $(document).on('show.bs.modal','#manageInvitesModal', function (event) {
+        var button = $(event.relatedTarget)
+        var gathering_id = parseInt(button.data('whatever'))
+        let members = [];
+        var manage_invites_container = document.getElementById("manage_invites_body")
+        manage_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
+        var manage_invites_body_innerHTML = ""
+        {% for user_gathering in user.profile.user_gathering.all %}
+          if({{user_gathering.gathering.id}} == gathering_id){
+            {% for member in user_gathering.gathering.user_gathering.all %}
+              members.push({{member.user_profile.id}})
+            {% endfor %}
+          }
+        {% endfor %}
+
+        {% for user in all_users %}
+          if(!members.includes({{user.id}})){
+            manage_invites_body_innerHTML +=  '<div class="card" id="manage-invites-{{user.id}}" style="padding:10;margin-bottom:5">'  +
+                                                '<div class="content">' +
+                                                  '<img class="right floated mini ui image" src="{{user.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.id}})">' +
+                                                  '<div class="header bold">{{user.first_name}}</div>'  +
+                                                  '<div class="fs-12 description italic">Member since {{user.get_date_joined}}</div>' +
+                                                '</div>'  +
+                                                '<div class="ui bottom attached button" id="invite-'+ gathering_id +'" onclick="inviteMember({{user.id}});">'  +
+                                                  '<i class="add icon"></i>Send Invite'  +
+                                                '</div>'  +
+                                              '</div>'
+          }
+        {% endfor %}
+        manage_invites_body_innerHTML += '</div>'
+        manage_invites_container.innerHTML += manage_invites_body_innerHTML;
+
+      })
 
       function participant_joined_gatherings(){
         console.log('here');
@@ -150,6 +280,153 @@
         console.log('here');
       }
 
+      function approveMember(member_id){
+        $.ajax({
+          type : "POST",
+          url: '{% url "approve_member" %}',
+          data : {
+            user_id: member_id
+          },
+          success : function(json) {
+              $("#cancel-requests-" + json['remove_id']).addClass('dis-none')
+              Topper({
+                title: '',
+                text: 'Request has been accepted',
+                style: 'success',
+                type: 'top',
+                autoclose: true,
+                autocloseAfter: 3000
+              });
+
+
+            addToGroup(json['chat_id'],json['remove_id']);
+            sendMessage(json['remove_id'],"Your request to join " + json['gathering_name'] + " has been approved.")
+          }
+
+        });
+
+      }
+
+      function declineMember(member_id){
+        var gathering_id = event.srcElement.id.substring(15)
+
+        $.ajax({
+          type : "POST",
+          url: '{% url "remove_member" %}',
+          data : {
+            gathering_id: gathering_id,
+            user_id: member_id
+          },
+          success : function(json) {
+              $("#cancel-requests-" + member_id).addClass('dis-none')
+              Topper({
+                title: '',
+                text: 'Request has been declined',
+                style: 'success',
+                type: 'top',
+                autoclose: true,
+                autocloseAfter: 3000
+              });
+          }
+        });
+
+      }
+
+
+      function cancelMember(member_id){
+        var gathering_id = event.srcElement.id.substring(7)
+
+        $.ajax({
+          type : "POST",
+          url: '{% url "cancel_member" %}',
+          data : {
+            gathering_id: gathering_id,
+            user_id: member_id
+          },
+          success : function(json) {
+              $("#cancel-invites-" + member_id).addClass('dis-none')
+              Topper({
+                title: '',
+                text: 'Invitation has been cancelled',
+                style: 'success',
+                type: 'top',
+                autoclose: true,
+                autocloseAfter: 3000
+              });
+          }
+        });
+
+      }
+
+      function inviteMember(member_id){
+        var gathering_id = event.srcElement.id.substring(7)
+
+        $.ajax({
+          type : "POST",
+          url: '{% url "invite_member" %}',
+          data : {
+            gathering_id: gathering_id,
+            user_id: member_id
+          },
+          success : function(json) {
+              $("#manage-invites-" + member_id).addClass('dis-none')
+              Topper({
+                title: '',
+                text: 'Invitation has been sent',
+                style: 'success',
+                type: 'top',
+                autoclose: true,
+                autocloseAfter: 3000
+              });
+          }
+        });
+
+      }
+
+      function remove_member(member_id){
+        var gathering_id = event.srcElement.id.substring(7)
+        bootbox.confirm({
+          message: "Are you sure you want to remove this member? ):",
+          centerVertical: true,
+          buttons: {
+              confirm: {
+                  label: 'Yes',
+                  className: 'btn-success'
+              },
+              cancel: {
+                  label: 'No',
+                  className: 'btn-danger'
+              }
+          },
+          callback: function (result) {
+              if(result){
+                  $.ajax({
+                    type : "POST",
+                    url: '{% url "remove_member" %}',
+                    data : {
+                      gathering_id: gathering_id,
+                      user_id: member_id
+                    },
+                    success : function(json) {
+                        removeFromChat(json['chat_id'],member_id)
+                        $("#manage_member_row-" + member_id).addClass('dis-none')
+                        $("#manage_member_row_divider-" + member_id).addClass('dis-none')
+                        Topper({
+                          title: '',
+                          text: 'Member has been successfully removed',
+                          style: 'success',
+                          type: 'top',
+                          autoclose: true,
+                          autocloseAfter: 3000
+                        });
+
+                        location.reload();
+                    }
+                  });
+              }
+          }
+      });
+    }
       function editGatheringPax(gatheringID){
         var min_pax = 0;
         {% for user_gathering in user.profile.user_gathering.all %}
@@ -185,8 +462,8 @@
                           autoclose: true,
                           autocloseAfter: 5000
                         });
-
-                        location.reload();
+                        //window.location.href = window.location.href + "?host_gathering_all";
+                        location.reload()
                     }
                   });
                 }
@@ -239,25 +516,62 @@
     </script>
   </head>
   <body>
-    <div class="modal fade" id="manageMemberModal" tabindex="-1" role="dialog" aria-labelledby="manageMemberModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="manageMemberModalLabel">Manage Members</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" id="manage_members_body">
-          test
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+    <div class="modal fade" id="manageRequestsModal" tabindex="-1" role="dialog" aria-labelledby="manageRequestsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="manageRequestsModalLabel">Manage Requests</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_requests_body">
+          </div>
         </div>
       </div>
     </div>
-  </div>
+    <div class="modal fade" id="cancelInvitesModal" tabindex="-1" role="dialog" aria-labelledby="cancelInvitesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancelInvitesModalLabel">Manage Invites</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="cancel_invites_body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="manageInvitesModal" tabindex="-1" role="dialog" aria-labelledby="manageInvitesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="manageInvitesModalLabel">Invite Members</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_invites_body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="manageMemberModal" tabindex="-1" role="dialog" aria-labelledby="manageMemberModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:220" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="manageMemberModalLabel">Manage Members</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_members_body">
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container p-t-10">
       <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <a class="navbar-brand" href="{% url 'homepage' %}">
@@ -296,10 +610,9 @@
             <div class="item">
               <div class="header">Host</div>
               <div class="menu">
-                <a id="host_gathering_all" class="item red item active" onclick="loadMainGatheringContainer('host_gathering_all');">Your Gatherings</a>
-                <a id="host_all_requests" class="item red item" onclick="loadMainGatheringContainer('host_all_requests');">Manage Requests
+                <a id="host_gathering_all" class="item red item active" onclick="loadMainGatheringContainer('host_gathering_all');">Your Gatherings
                   {% if host_all_request > 0 %}
-                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('host_all_requests');">{{ host_all_request}}</div>
+                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('host_gathering_all');">{{ host_all_request}}</div>
                   {% endif %}
                 </a>
               </div>
@@ -369,19 +682,6 @@
             if (response === "success") {
                console.log('login successful, perform your actions if any, for example: load contacts, getting unread message count, etc')
                $("#mck-sidebox-launcher").prepend("<span id='unread-count' class='bold fs-16 dis-none' ></span>")
-               /*
-               $applozic.fn.applozic('createGroup', {'groupName' : '{{store.store_name}}({{store.hawker_centre.centre_name}})',   // required
-                                                 'type' : 2,                // 1 for private , 2 for public, 5 for broadcast (required)
-                                                 'imageUrl': '{{ store.get_storepic_url }}',
-                                                 'users': [{ userId:{{user.profile.id}},
-                                                             groupRole : 1  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
-                                                           }],
-                                                          'callback' : function(response){console.log(response);}})
-
-               $applozic.fn.applozic('updateGroupInfo', {'groupId' : 47235857,
-                                    'imageUrl' : '{{ store.get_storepic_url }}',
-                                    'callback' : function(response){console.log(response);}});
-              */
 
             }
         }
@@ -393,6 +693,31 @@
 
      function chatIndiv(id){
        $applozic.fn.applozic('loadTab', id);
+     }
+
+     function sendMessage(sendTo,message){
+       $applozic.fn.applozic('sendMessage', {
+                   'to': sendTo,           // userId of the receiver
+                   'message' : message,
+                   'type' : 0                  //(optional) DEFAULT(0),
+                     });
+     }
+
+     function removeFromChat(groupID,memberID){
+       $applozic.fn.applozic('removeGroupMember',{'groupId': groupID,
+                                          'clientGroupId' : groupID, //use either groupId or clientGroupId
+                                          'userId': memberID,
+                                          'callback': function(response) {console.log(response);}
+                                          });
+     }
+
+     function addToGroup(groupID,memberID){
+       $applozic.fn.applozic('addGroupMember',{'groupId': groupID,
+                                       'clientGroupId': groupID, //use either groupId or clientGroupId
+                                       'userId': memberID,
+                                       'role' :  3,  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
+                                       'callback': function(response) {console.log(response);}
+                                       });
      }
 
      function deleteGroup(groupID){

@@ -26,3 +26,4 @@ class UserGathering(models.Model):
 
     class Meta:
         app_label = "Enso"
+        ordering = ['member_type']

@@ -551,8 +551,8 @@
              var userCount = {{gathering.no_pax}}
              {% for user in gathering.user_gathering.all %}
               if('{{user.status}}' === "J"){
-                 gatheringList_div_innerHTML +=         "<div class='col' style='padding:0' >" +
-                                                          "<img class='avatar-tooltip' data-content='{{user.user_profile.first_name}} ({{user.get_member_type_display}})' src='{{user.user_profile.get_profile_url}}' style='width:75%;border-radius:50%;border:2px solid green;'></img>" +
+                 gatheringList_div_innerHTML +=         "<div class='col-sm-2' style='padding:0;margin:0 2;' >" +
+                                                          "<img class='avatar-tooltip' data-content='{{user.user_profile.first_name}} ({{user.get_member_type_display}})' src='{{user.user_profile.get_profile_url}}' style='width:100%;border-radius:50%;border:2px solid green;'></img>" +
                                                         "</div>"
                  userCount -=1
               }
@@ -563,8 +563,8 @@
 
 
              for (i = 0; i < userCount; i++) {
-              gatheringList_div_innerHTML +=         "<div class='col' style='padding:0'>" +
-                                                        "<img class='avatar-tooltip' data-content='Could be you!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:70%;border-radius:50%;border:2px solid black'></img>" +
+              gatheringList_div_innerHTML +=         "<div class='col-sm-2' style='padding:0;margin:0 2;'>" +
+                                                        "<img class='avatar-tooltip' data-content='Could be you!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:100%;border-radius:50%;border:2px solid black'></img>" +
                                                       "</div>"
               }
              gatheringList_div_innerHTML +=  "</div>" +

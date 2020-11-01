@@ -4,7 +4,7 @@
 
 .bold {font-weight: bold;}
 .italic {font-style: italic;}
-
+.underline {text-decoration: underline;}
 /*[ FONT SIZE ]
 ///////////////////////////////////////////////////////////
 */
@@ -2282,7 +2282,7 @@
 -----------------------------------------------------------
 */
 .vis-hidden {visibility: hidden;}
-.dis-none {display: none;}
+.dis-none {display: none !important;}
 .dis-block {display: block;}
 .dis-inline {display: inline;}
 .dis-inline-block {display: inline-block;}

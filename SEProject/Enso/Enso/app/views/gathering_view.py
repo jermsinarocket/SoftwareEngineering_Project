@@ -12,6 +12,7 @@ from django.core import serializers
 from django.http import JsonResponse,QueryDict
 from django.forms.models import model_to_dict
 from Enso.app.models.gathering import Gathering
+from Enso.app.models.profile import Profile
 from Enso.app.models.user_gathering import UserGathering
 from Enso.app.models.food_store import FoodStore
 from django.forms.models import model_to_dict
@@ -25,7 +26,8 @@ import json
 @login_required
 def gathering_page(request):
     return render(request,'gatheringpage.html',{"host_all_request":host_get_pending_requests_count(request.user,"I") + host_get_pending_requests_count(request.user,"R"),
-                                                "participant_pending_request": participant_get_pending_requests_count(request.user)
+                                                "participant_pending_request": participant_get_pending_requests_count(request.user),
+                                                "all_users": Profile.objects.all()
                                                 }
                 )
 
@@ -87,3 +89,35 @@ def update_pax(request):
     gathering.no_pax = request.POST['num_pax']
     gathering.save()
     return JsonResponse({'success':True})
+
+@login_required
+@csrf_exempt
+def remove_member(request):
+    gathering_id = request.POST['gathering_id']
+    UserGathering.objects.filter(Q(gathering=gathering_id) & Q(user_profile=request.POST['user_id'])).delete()
+    gathering_obj = Gathering.objects.filter(id=gathering_id)
+    chat_id = gathering_obj.values('chat_id')[0]['chat_id']
+    return JsonResponse({'chat_id':chat_id})
+
+@login_required
+@csrf_exempt
+def invite_member(request):
+    gathering = Gathering.objects.get(id=request.POST['gathering_id'])
+    user_profile = Profile.objects.get(id=request.POST['user_id'])
+    UserGathering.objects.create(user_profile=user_profile,gathering = gathering,member_type='M',status='I')
+    return JsonResponse({'success':True})
+
+
+@login_required
+@csrf_exempt
+def cancel_member(request):
+    UserGathering.objects.filter(Q(gathering=request.POST['gathering_id']) & Q(user_profile=request.POST['user_id'])).delete()
+    return JsonResponse({'success':True})
+
+@login_required
+@csrf_exempt
+def approve_member(request):
+    user_obj = UserGathering.objects.get(id= request.POST['user_id'])
+    user_obj.status = "J"
+    user_obj.save()
+    return JsonResponse({'chat_id':user_obj.gathering.chat_id,'gathering_name':user_obj.gathering.name,'remove_id':user_obj.user_profile.id})

@@ -36,8 +36,6 @@ class Gathering(models.Model):
     def getPendingSelected(self,status):
         gatherings = Gathering.objects.all()
         num_requests = len(gatherings.filter(Q(user_gathering__gathering = self.id) & Q(user_gathering__status = status)))
-        if num_requests == 0:
-            return "No"
         return num_requests
 
     def getPendingInvites(self):
