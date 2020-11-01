@@ -51,7 +51,7 @@ def food_store_listings(request):
 
 @login_required
 def food_store(request,store_id):
-    return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id),'duration':request.GET.get('t'),'distance':request.GET.get('d')})
+    return render(request, 'storepage.html', {'store':FoodStore.objects.get(pk=store_id),'duration':request.GET.get('t'),'distance':request.GET.get('d'),"all_users": Profile.objects.all()})
 
 @login_required
 def create_gathering(request):

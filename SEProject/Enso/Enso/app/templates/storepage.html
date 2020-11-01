@@ -180,7 +180,6 @@
               <div class='row p-t-5'>
                 <div class="wrap-input-host">
                   <input class="input-host" type="text" name="gathering_name"  autocapitalize="none"  maxlength="150" required id="gatheringName" >
-      						<!--<input id="username" class="input100" type="text">-->
       					</div>
               </div>
               <div class='row'>
@@ -211,6 +210,8 @@
                 <button class="signup100-form-btn" type=submit id='host-gathering-btn' style="width:50%;height:30px;margin:auto;">
                   HOST
                 </button>
+                <i class="dis-none" id="host-invite"  data-toggle="modal" data-target="#manageInvitesModal" data-whatever="" style="width:50%;height:30px;margin:auto;">
+                </i>
               </div>
     				</form>
           </div>
@@ -333,6 +334,21 @@
       </div>
     </div>
 
+    <div class="modal fade" id="manageInvitesModal" tabindex="-1" role="dialog" aria-labelledby="manageInvitesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="manageInvitesModalLabel">Invite Members</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_invites_body">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <span id="chat-unread-count" class="chat-launcher-icon" ></span>
     <script>
 
@@ -448,6 +464,58 @@
     });
 
 
+    $(document).on('click', '#host-invite',function(event){
+      var gathering_id = parseInt($('#host-invite').data('whatever'))
+
+      var manage_invites_container = document.getElementById("manage_invites_body")
+      manage_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
+      var manage_invites_body_innerHTML = ""
+
+      {% for rest_user in all_users %}
+        if({{user.profile.id}} != {{rest_user.id}}){
+          manage_invites_body_innerHTML +=  '<div class="card" id="manage-invites-{{rest_user.id}}" style="padding:10;margin-bottom:5">'  +
+                                              '<div class="content">' +
+                                                '<img class="right floated mini ui image" src="{{rest_user.get_profile_url}}" style="cursor:pointer" onclick="chat({{rest_user.id}})">' +
+                                                '<div class="header bold">{{rest_user.first_name}}</div>'  +
+                                                '<div class="fs-12 description italic">Member since {{rest_user.get_date_joined}}</div>' +
+                                              '</div>'  +
+                                              '<div class="ui bottom attached button" id="invite-'+ gathering_id +'" onclick="inviteMember({{rest_user.id}});">'  +
+                                                '<i class="add icon"></i>Send Invite'  +
+                                              '</div>'  +
+                                            '</div>'
+        }
+      {% endfor %}
+      manage_invites_body_innerHTML += '</div>'
+      manage_invites_container.innerHTML += manage_invites_body_innerHTML;
+
+    })
+
+    function inviteMember(member_id){
+      var gathering_id = event.srcElement.id.substring(7)
+
+      $.ajax({
+        type : "POST",
+        url: '{% url "invite_member" %}',
+        data : {
+          gathering_id: gathering_id,
+          user_id: member_id
+        },
+        success : function(json) {
+            $("#manage-invites-" + member_id).addClass('dis-none')
+            Topper({
+              title: '',
+              text: 'Invitation has been sent',
+              style: 'success',
+              type: 'top',
+              autoclose: true,
+              autocloseAfter: 3000
+            });
+        }
+      });
+
+    }
+
+
     $(document).on('submit', '#host-gathering-form',function(event){
     		event.preventDefault()
 
@@ -469,6 +537,7 @@
                                                           groupRole : 1  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
                                                         }],
                                                        'callback' : function(response){
+                                                         console.log(response)
                                                          var groupID = response['data']['value']
 
                                                          $.ajax({
@@ -494,14 +563,16 @@
               style: 'success',
               type: 'top',
               autoclose: true,
-              autocloseAfter: 5000
+              autocloseAfter: 3000
               });
 
-            refreshGatherings();
+            $('#host-invite').data('whatever', json['gathering_id']);
+            $("#host-invite").trigger('click')
           }
         })
 
     });
+
 
 
     function chat(id){
