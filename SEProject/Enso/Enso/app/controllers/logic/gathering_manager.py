@@ -21,5 +21,9 @@ def host_get_pending_requests_count(user,user_status):
     return len(user_requests)
 
 def participant_get_pending_requests_count(user):
-    user_requests = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & (Q(status="R")| Q(status="I") ))
+    user_requests = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="R"))
+    return len(user_requests)
+
+def participant_get_pending_invites_count(user):
+    user_requests = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="I"))
     return len(user_requests)

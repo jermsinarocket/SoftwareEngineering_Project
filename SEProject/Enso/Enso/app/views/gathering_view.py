@@ -17,7 +17,7 @@ from Enso.app.models.user_gathering import UserGathering
 from Enso.app.models.food_store import FoodStore
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
-from Enso.app.controllers.logic.gathering_manager import  host_get_pending_requests_count,participant_get_pending_requests_count
+from Enso.app.controllers.logic.gathering_manager import  host_get_pending_requests_count,participant_get_pending_requests_count,participant_get_pending_invites_count
 import os
 import sys
 import datetime
@@ -27,6 +27,7 @@ import json
 def gathering_page(request):
     return render(request,'gatheringpage.html',{"host_all_request":host_get_pending_requests_count(request.user,"I") + host_get_pending_requests_count(request.user,"R"),
                                                 "participant_pending_request": participant_get_pending_requests_count(request.user),
+                                                "participant_pending_invite": participant_get_pending_invites_count(request.user),
                                                 "all_users": Profile.objects.all()
                                                 }
                 )
@@ -121,3 +122,12 @@ def approve_member(request):
     user_obj.status = "J"
     user_obj.save()
     return JsonResponse({'chat_id':user_obj.gathering.chat_id,'gathering_name':user_obj.gathering.name,'remove_id':user_obj.user_profile.id})
+
+
+@login_required
+@csrf_exempt
+def leave_gathering(request):
+    user_obj = UserGathering.objects.get(id= request.POST['user_gathering_id'])
+    chat_id = user_obj.gathering.chat_id
+    user_obj.delete()
+    return JsonResponse({'chat_id':user_obj.gathering.chat_id})

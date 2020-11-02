@@ -335,8 +335,8 @@
     </div>
 
     <div class="modal fade" id="manageInvitesModal" tabindex="-1" role="dialog" aria-labelledby="manageInvitesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
-        <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="width:900;left:-180">
           <div class="modal-header">
             <h5 class="modal-title" id="manageInvitesModalLabel">Invite Members</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -468,8 +468,8 @@
       var gathering_id = parseInt($('#host-invite').data('whatever'))
 
       var manage_invites_container = document.getElementById("manage_invites_body")
-      manage_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
-      var manage_invites_body_innerHTML = ""
+      manage_invites_container.innerHTML = ""
+      var manage_invites_body_innerHTML = "<div class='ui three cards' style='margin:0'>"
 
       {% for rest_user in all_users %}
         if({{user.profile.id}} != {{rest_user.id}}){
@@ -532,7 +532,7 @@
           },
           success : function(json) {
             $applozic.fn.applozic('createGroup', {'groupName' : $('#gatheringName').val(),   // required
-                                              'type' : 1,                // 1 for private , 2 for public, 5 for broadcast (required)
+                                              'type' : 2,                // 1 for private , 2 for public, 5 for broadcast (required)
                                               'users': [{ userId:{{user.profile.id}},
                                                           groupRole : 1  // (optional)  USER(0), ADMIN(1), MODERATOR(2), MEMBER(3)
                                                         }],

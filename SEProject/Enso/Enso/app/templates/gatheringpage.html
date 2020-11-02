@@ -151,8 +151,7 @@
         var gathering_id = parseInt(button.data('whatever'))
         var manage_requests_container = document.getElementById("manage_requests_body")
         manage_requests_container.innerHTML = ""
-        manage_requests_container.innerHTML = "<div class='ui cards' style='margin:0'>"
-        var manage_requests_body_innerHTML = ""
+        var manage_requests_body_innerHTML = "<div class='ui four cards' style='margin:0'>"
 
         {% for user_gathering in user.profile.user_gathering.all %}
           if({{user_gathering.gathering.id}} == gathering_id){
@@ -161,7 +160,8 @@
                 manage_requests_body_innerHTML +=  '<div class="card" id="cancel-requests-{{user.user_profile.id}}" style="padding:10;margin-bottom:5">'  +
                                                       '<div class="content">' +
                                                         '<img class="right floated mini ui image" src="{{user.user_profile.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.user_profile.id}})">' +
-                                                        '<div class="header bold">{{user.user_profile.first_name}}</div>'  +
+                                                        '<div class="header bold">{{user.user_profile.first_name}}<br><span class="italic">Level {{user.user_profile.current_level.id}}</span></div>'  +
+                                                        '<div class="fs-12 description italic">Member since {{user.user_profile.get_date_joined}}</div>' +
                                                       '</div>'  +
                                                       '<div class="extra content">' +
                                                         '<div class="ui two buttons mini">' +
@@ -184,8 +184,7 @@
         var gathering_id = parseInt(button.data('whatever'))
         var cancel_invites_container = document.getElementById("cancel_invites_body")
         cancel_invites_container.innerHTML = ""
-        cancel_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
-        var cancel_invites_body_innerHTML = ""
+        var cancel_invites_body_innerHTML = "<div class='ui cards' style='margin:0'>"
 
         {% for user_gathering in user.profile.user_gathering.all %}
           if({{user_gathering.gathering.id}} == gathering_id){
@@ -194,7 +193,8 @@
                 cancel_invites_body_innerHTML +=  '<div class="card" id="cancel-invites-{{user.user_profile.id}}" style="padding:10;margin-bottom:5">'  +
                                                     '<div class="content">' +
                                                       '<img class="right floated mini ui image" src="{{user.user_profile.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.user_profile.id}})">' +
-                                                      '<div class="header bold">{{user.user_profile.first_name}}</div>'  +
+                                                      '<div class="header bold">{{user.user_profile.first_name}}<br><span class="italic">Level {{user.user_profile.current_level.id}}</span></div>'  +
+                                                      '<div class="fs-12 description italic">Member since {{user.user_profile.get_date_joined}}</div>' +
                                                     '</div>'  +
                                                     '<div class="ui bottom attached button" id="cancel-'+ gathering_id +'" onclick="cancelMember({{user.user_profile.id}});">'  +
                                                       '<i class="remove icon"></i>Cancel Invite'  +
@@ -243,8 +243,8 @@
         var gathering_id = parseInt(button.data('whatever'))
         let members = [];
         var manage_invites_container = document.getElementById("manage_invites_body")
-        manage_invites_container.innerHTML = "<div class='ui cards' style='margin:0'>"
-        var manage_invites_body_innerHTML = ""
+        manage_invites_container.innerHTML =""
+        var manage_invites_body_innerHTML = "<div class='ui four cards' style='margin:0'>"
         {% for user_gathering in user.profile.user_gathering.all %}
           if({{user_gathering.gathering.id}} == gathering_id){
             {% for member in user_gathering.gathering.user_gathering.all %}
@@ -258,7 +258,7 @@
             manage_invites_body_innerHTML +=  '<div class="card" id="manage-invites-{{user.id}}" style="padding:10;margin-bottom:5">'  +
                                                 '<div class="content">' +
                                                   '<img class="right floated mini ui image" src="{{user.get_profile_url}}" style="cursor:pointer" onclick="chatIndiv({{user.id}})">' +
-                                                  '<div class="header bold">{{user.first_name}}</div>'  +
+                                                  '<div class="header bold">{{user.first_name}}<br><span class="italic">Level {{user.current_level.id}}</span></div>'  +
                                                   '<div class="fs-12 description italic">Member since {{user.get_date_joined}}</div>' +
                                                 '</div>'  +
                                                 '<div class="ui bottom attached button" id="invite-'+ gathering_id +'" onclick="inviteMember({{user.id}});">'  +
@@ -273,13 +273,343 @@
       })
 
       function participant_joined_gatherings(){
-        console.log('here');
+        var main_gathering_container = document.getElementById("main-gathering-container")
+        var gathering_count = 0;
+        var main_gathering_container_innerHTML = ""
+        main_gathering_container_innerHTML += "<div class='row p-t-10'>"
+        {% for user_gathering in user.profile.user_gathering.all %}
+          {% if user_gathering.member_type == 'M' and user_gathering.gathering.status != 'C' and user_gathering.status == 'J' %}
+
+            main_gathering_container_innerHTML += '<div class="col-5 m-b-8" id="gathering_all_{{user_gathering.gathering.id}}">' +
+                                                    '<div class="card" style="width: 22rem;">' +
+                                                      '<img class="card-img-top" src="{{user_gathering.gathering.food_store.get_storepic_url}}"  style="opacity:0.8;">' +
+                                                      '<div class="card-body">' +
+                                                          '<h5 class="card-title">{{user_gathering.gathering.name}}' +
+                                                          '<span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></span></h5>' +
+                                                          '<p class="card-text">Where?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                          '<p class="card-text style="margin-top:-5">When?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                          '<p class="card-text" style="margin-top:-5">Who?</p>' +
+                                                          '<div class="row card-text" style="margin-top:-10">'
+
+          {% for member in user_gathering.gathering.user_gathering.all %}
+
+           if('{{member.status}}' === "J"){
+              main_gathering_container_innerHTML += "<div class='col-sm-2' >" +
+                                                      "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                    "</div>"
+           }
+           {% endfor %}
+
+           for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
+            main_gathering_container_innerHTML +=   "<div class='col-sm-2'>" +
+                                                      "<img class='avatar-tooltip' data-content='Still Empty!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;cursor:pointer;'></img>" +
+                                                    "</div>"
+
+            }
+            main_gathering_container_innerHTML += '</div>'
+
+            main_gathering_container_innerHTML +=  '</div>' +
+                                                     '<div class="card-footer text-center">'+
+                                                       '<button class="btn btn-danger" style="color:white" onclick="leaveGathering({{user_gathering.id}})">Leave Gathering</button>'+
+                                                     '</div>'+
+                                                  '</div>' +
+                                                '</div>'
+
+
+           if((gathering_count+1)%2 === 0){
+             main_gathering_container_innerHTML += "</div><div class='row p-t-5'>"
+           }
+            gathering_count+=1;
+
+
+          {% endif %}
+        {% endfor %}
+        main_gathering_container.innerHTML += main_gathering_container_innerHTML;
+        $('.avatar-tooltip').popup();
       }
 
-      function participant_pending_gatherings(){
-        console.log('here');
+      function participant_pending_requests(){
+        var main_gathering_container = document.getElementById("main-gathering-container")
+        var gathering_count = 0;
+        var main_gathering_container_innerHTML = ""
+        main_gathering_container_innerHTML += "<div class='row p-t-10'>"
+        {% for user_gathering in user.profile.user_gathering.all %}
+          {% if user_gathering.member_type == 'M' and user_gathering.gathering.status != 'C' and user_gathering.status == 'R' %}
+
+            main_gathering_container_innerHTML += '<div class="col-5 m-b-8" id="cancel_request-{{user_gathering.id}}">' +
+                                                    '<div class="card" style="width: 22rem;">' +
+                                                      '<img class="card-img-top" src="{{user_gathering.gathering.food_store.get_storepic_url}}"  style="opacity:0.8;">' +
+                                                      '<div class="card-body">' +
+                                                          '<h5 class="card-title">{{user_gathering.gathering.name}}</h5>' +
+                                                          '<p class="card-text">Where?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                          '<p class="card-text style="margin-top:-5">When?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                          '<p class="card-text" style="margin-top:-5">Who?</p>' +
+                                                          '<div class="row card-text" style="margin-top:-10">'
+
+          {% for member in user_gathering.gathering.user_gathering.all %}
+
+           if('{{member.status}}' === "J"){
+              main_gathering_container_innerHTML += "<div class='col-sm-2' >" +
+                                                      "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                    "</div>"
+           }
+           {% endfor %}
+
+           for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
+            main_gathering_container_innerHTML +=   "<div class='col-sm-2'>" +
+                                                      "<img class='avatar-tooltip' data-content='Still Empty!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;cursor:pointer;'></img>" +
+                                                    "</div>"
+
+            }
+            main_gathering_container_innerHTML += '</div>'
+
+            main_gathering_container_innerHTML +=  '</div>' +
+                                                     '<div class="card-footer text-center">'+
+                                                       '<button class="btn btn-danger" style="color:white" onclick="cancelRequest({{user_gathering.id}})">Cancel Request</button>'+
+                                                     '</div>'+
+                                                  '</div>' +
+                                                '</div>'
+
+
+           if((gathering_count+1)%2 === 0){
+             main_gathering_container_innerHTML += "</div><div class='row p-t-5'>"
+           }
+            gathering_count+=1;
+
+
+          {% endif %}
+        {% endfor %}
+        main_gathering_container.innerHTML += main_gathering_container_innerHTML;
+        $('.avatar-tooltip').popup();
       }
 
+      function participant_pending_invites(){
+        var main_gathering_container = document.getElementById("main-gathering-container")
+        var gathering_count = 0;
+        var main_gathering_container_innerHTML = ""
+        main_gathering_container_innerHTML += "<div class='row p-t-10'>"
+        {% for user_gathering in user.profile.user_gathering.all %}
+          {% if user_gathering.member_type == 'M' and user_gathering.gathering.status != 'C' and user_gathering.status == 'I' %}
+
+            main_gathering_container_innerHTML += '<div class="col-5 m-b-8" id="cancel_request-{{user_gathering.id}}">' +
+                                                    '<div class="card" style="width: 22rem;">' +
+                                                      '<img class="card-img-top" src="{{user_gathering.gathering.food_store.get_storepic_url}}"  style="opacity:0.8;">' +
+                                                      '<div class="card-body">' +
+                                                          '<h5 class="card-title">{{user_gathering.gathering.name}}</h5>' +
+                                                          '<p class="card-text">Where?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                          '<p class="card-text style="margin-top:-5">When?</p>'+
+                                                          '<p class="card-text bold" style="margin-top:-13">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                          '<p class="card-text" style="margin-top:-5">Who?</p>' +
+                                                          '<div class="row card-text" style="margin-top:-10">'
+
+          {% for member in user_gathering.gathering.user_gathering.all %}
+
+           if('{{member.status}}' === "J"){
+              main_gathering_container_innerHTML += "<div class='col-sm-2' >" +
+                                                      "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                    "</div>"
+           }
+           {% endfor %}
+
+           for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
+            main_gathering_container_innerHTML +=   "<div class='col-sm-2'>" +
+                                                      "<img class='avatar-tooltip' data-content='Still Empty!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;cursor:pointer;'></img>" +
+                                                    "</div>"
+
+            }
+            main_gathering_container_innerHTML += '</div>'
+
+            main_gathering_container_innerHTML +=  '</div>' +
+                                                     '<div class="card-footer text-center">'+
+                                                      '<button class="btn btn-danger btn-sm float-left" style="color:white" onclick="rejectInvite({{user_gathering.id}})">Reject Invite</button>'+
+                                                      '<button class="btn btn-primary btn-sm float-right" style="color:white" onclick="acceptInvite({{user_gathering.id}})">Accept Invite</button>'+
+                                                     '</div>'+
+                                                  '</div>' +
+                                                '</div>'
+
+
+           if((gathering_count+1)%2 === 0){
+             main_gathering_container_innerHTML += "</div><div class='row p-t-5'>"
+           }
+            gathering_count+=1;
+
+
+          {% endif %}
+        {% endfor %}
+        main_gathering_container.innerHTML += main_gathering_container_innerHTML;
+        $('.avatar-tooltip').popup();
+      }
+
+
+      function acceptInvite(user_gathering_id){
+          bootbox.confirm({
+            message: "Are you sure you want to accept this invite?",
+            centerVertical: true,
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result){
+                    $.ajax({
+                      type : "POST",
+                      url: '{% url "approve_member" %}',
+                      data : {
+                        user_id: user_gathering_id
+                      },
+                      success : function(json) {
+                          addToGroup(json['chat_id'],{{user.profile.id}})
+                          Topper({
+                            title: '',
+                            text: 'You have accepted the Invite!',
+                            style: 'success',
+                            type: 'top',
+                            autoclose: true,
+                            autocloseAfter: 3000
+                          });
+
+                          window.location.href = window.location.hostname + "/gathering/?participant_pending_invites";
+                      }
+                    });
+                }
+            }
+        });
+      }
+
+      function rejectInvite(user_gathering_id){
+          bootbox.confirm({
+            message: "Are you sure you want to reject this invite?",
+            centerVertical: true,
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result){
+                    $.ajax({
+                      type : "POST",
+                      url: '{% url "leave_gathering" %}',
+                      data : {
+                        user_gathering_id: user_gathering_id
+                      },
+                      success : function(json) {
+                          Topper({
+                            title: '',
+                            text: 'You have rejected the Invite',
+                            style: 'success',
+                            type: 'top',
+                            autoclose: true,
+                            autocloseAfter: 3000
+                          });
+
+                          window.location.href = window.location.hostname + "/gathering/?participant_pending_invites";
+                      }
+                    });
+                }
+            }
+        });
+      }
+
+      function cancelRequest(user_gathering_id){
+        bootbox.confirm({
+          message: "Are you sure you want to cancel your request?",
+          centerVertical: true,
+          buttons: {
+              confirm: {
+                  label: 'Yes',
+                  className: 'btn-success'
+              },
+              cancel: {
+                  label: 'No',
+                  className: 'btn-danger'
+              }
+          },
+          callback: function (result) {
+              if(result){
+                  $.ajax({
+                    type : "POST",
+                    url: '{% url "leave_gathering" %}',
+                    data : {
+                      user_gathering_id: user_gathering_id
+                    },
+                    success : function(json) {
+                        Topper({
+                          title: '',
+                          text: 'You have withdrawn your request',
+                          style: 'success',
+                          type: 'top',
+                          autoclose: true,
+                          autocloseAfter: 3000
+                        });
+
+                        window.location.href = window.location.hostname + "/gathering/?participant_pending_requests";
+                    }
+                  });
+              }
+          }
+      });
+      }
+
+      function leaveGathering(user_gathering_id){
+        bootbox.confirm({
+          message: "Are you sure you want to leave this gathering?",
+          centerVertical: true,
+          buttons: {
+              confirm: {
+                  label: 'Yes',
+                  className: 'btn-success'
+              },
+              cancel: {
+                  label: 'No',
+                  className: 'btn-danger'
+              }
+          },
+          callback: function (result) {
+              if(result){
+                  $.ajax({
+                    type : "POST",
+                    url: '{% url "leave_gathering" %}',
+                    data : {
+                      user_gathering_id: user_gathering_id
+                    },
+                    success : function(json) {
+                        deleteGroup(json['chat_id'])
+                        Topper({
+                          title: '',
+                          text: 'You have left the gathering',
+                          style: 'success',
+                          type: 'top',
+                          autoclose: true,
+                          autocloseAfter: 3000
+                        });
+
+                        window.location.href = window.location.hostname + "/gathering/?participant_joined_gatherings";
+                    }
+                  });
+              }
+          }
+      });
+    }
       function approveMember(member_id){
         $.ajax({
           type : "POST",
@@ -517,8 +847,8 @@
   </head>
   <body>
     <div class="modal fade" id="manageRequestsModal" tabindex="-1" role="dialog" aria-labelledby="manageRequestsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
-        <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:900;left:-180">
           <div class="modal-header">
             <h5 class="modal-title" id="manageRequestsModalLabel">Manage Requests</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
@@ -531,8 +861,8 @@
       </div>
     </div>
     <div class="modal fade" id="cancelInvitesModal" tabindex="-1" role="dialog" aria-labelledby="cancelInvitesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
-        <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content"  style="width:900;left:-180">
           <div class="modal-header">
             <h5 class="modal-title" id="cancelInvitesModalLabel">Manage Invites</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
@@ -545,8 +875,8 @@
       </div>
     </div>
     <div class="modal fade" id="manageInvitesModal" tabindex="-1" role="dialog" aria-labelledby="manageInvitesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="max-width:240" role="document">
-        <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:900;left:-180">
           <div class="modal-header">
             <h5 class="modal-title" id="manageInvitesModalLabel">Invite Members</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="window.location.reload();">
@@ -621,9 +951,14 @@
               <div class="header">Participant</div>
               <div class="menu">
                 <a id='participant_joined_gatherings' class="item red item" onclick="loadMainGatheringContainer('participant_joined_gatherings');">Joined Gatherings</a>
-                <a id='participant_pending_gatherings' class="item red item" onclick="loadMainGatheringContainer('participant_pending_gatherings');">Pending Gatherings
+                <a id='participant_pending_requests' class="item red item" onclick="loadMainGatheringContainer('participant_pending_requests');">Pending Requests
                   {% if participant_pending_request > 0 %}
-                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('participant_pending_gatherings');">{{participant_pending_request}}</div>
+                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('participant_pending_requests');">{{participant_pending_request}}</div>
+                  {% endif %}
+                </a>
+                <a id='participant_pending_invites' class="item red item" onclick="loadMainGatheringContainer('participant_pending_invites');">Pending Invites
+                  {% if participant_pending_invite > 0 %}
+                  <div class="ui red left pointing label" onclick="loadMainGatheringContainer('participant_pending_invites');">{{participant_pending_invite}}</div>
                   {% endif %}
                 </a>
               </div>
