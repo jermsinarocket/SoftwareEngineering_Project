@@ -50,6 +50,11 @@
 
         });
     </script>
+
+    <!-- Star Rating-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-star-rating/4.0.6/css/star-rating.min.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-star-rating/4.0.6/js/star-rating.min.js" type="text/javascript"></script>
+
 </head>
 
 <body>
@@ -103,13 +108,13 @@
         <div class="py-5">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-8" style="">
+                    <div class="col-md-8" >
                         <h1>Your Profile!</h1>
                     </div>
-                    <div class="col-md-4" style="">
+                    <div class="col-md-4" >
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 style="" class="text-center"><b>Lv. {{profile.get_level_id}}</b></h5>
+                                <h5  class="text-center"><b>Lv. {{profile.get_level_id}}</b></h5>
                             </div>
                         </div>
                         <div class="row">
@@ -119,53 +124,53 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3" style=""><img class="img-fluid d-block rounded-circle"
+                    <div class="col-md-3" ><img class="img-fluid d-block rounded-circle"
                             src="{{ user.profile.get_profile_url }}">
                         <div class="row justify-content-center py-3">
-                            <div class="col-md-2 my-1" style=""><i class="fa fa-2x fa-qrcode"></i></div>
-                            <div class="col-md-6" style="">
+                            <div class="col-md-2 my-1" ><i class="fa fa-2x fa-qrcode"></i></div>
+                            <div class="col-md-6" >
                                 <h6 class="">Generate Payment QR!<br></h6>
                             </div>
                         </div>
                     </div>
                     <div class="px-md-5 d-flex flex-column align-items-start justify-content-start p-2 col-md-5"
-                        style="">
+                        >
                         <h1>{{profile.get_full_name}}</h1>
                         <p class="mb-3 lead">{{profile.get_user}}</p>
                         <p class="mb-3 lead">Food enthusiast! Excited to meet new people and explore new food :)</p>
                         <div class="row">
-                            <div class="col-md-2" style=""><i class="fa fa-envelope-o fa-lg"></i></div>
-                            <div class="col-md-6 " style="">
-                                <p class="mb-2" style="">{{user.email}}</p>
+                            <div class="col-md-2" ><i class="fa fa-envelope-o fa-lg"></i></div>
+                            <div class="col-md-6 " >
+                                <p class="mb-2" >{{user.email}}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4" style="">
+                    <div class="col-md-4" >
                         <div class="row my-3">
                             <div class="col-md-12">
                                 <div class="card-body shadow border rounded">
                                     <h6 class="card-title"><b>Your Experience</b></h6>
                                     <h6 class="card-subtitle my-2 text-muted">@ Grilled Goodness, 6 Sep</h6>
-                                    
-                                    <div class="mt-3 mb-3">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <p class="card-text">Who was there?</p>
 
-                                    <div class = "mb-4">
-                                        <i class="fas fa-2x fa-check-circle"></i>
-                                        <i class="fas fa-2x fa-check-circle"></i>
-                                        <i class="far fa-2x fa-user-circle"></i>
-                                        <i class="far fa-2x fa-user-circle"></i>
-                                        <i class="far fa-2x fa-user-circle"></i>
-                                        <i class="far fa-2x fa-user-circle"></i>
-                                    </div>
-                                    <a class="btn mr-2 btn-light w-25" href="#">CLEAR</a>
-                                    <a class="btn mr-2 btn-light w-25" href="#" style="">SUBMIT</a>
+                                    <form action="/test" method="get">
+                                        <div class="mt-3 mb-3">
+                                            <input type="text" class="kv-fa rating-loading" value="4" data-size="xs" title="">
+                                            <br>
+                                        </div>
+                                        <p class="card-text">Who was there?</p>
+
+                                        <div class = "mb-4">
+                                            <i class="fas fa-2x fa-check-circle"></i>
+                                            <i class="fas fa-2x fa-check-circle"></i>
+                                            <i class="far fa-2x fa-user-circle"></i>
+                                            <i class="far fa-2x fa-user-circle"></i>
+                                            <i class="far fa-2x fa-user-circle"></i>
+                                            <i class="far fa-2x fa-user-circle"></i>
+                                        </div>
+                                        <button class="btn mr-2 btn-light w-25" type="button">CLEAR</button>
+                                        <button class="btn mr-2 btn-light w-25" type="submit">SUBMIT</button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -194,4 +199,12 @@
 
     </body>
 
+    <!-- Star Rating -->
+    <script>
+            $('.kv-fa').rating({
+            filledStar: '<i class="fa fa-star"></i>',
+            emptyStar: '<i class="fa fa-star-o"></i>'
+        });
+    </script>
+    
 </html>
