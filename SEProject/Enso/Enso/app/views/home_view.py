@@ -75,9 +75,6 @@ def profilepage(request):
     for i in filteredgatherings:
         gatherings.append(i.gathering)
     
-    print(len(gatherings))
-
-
     # add this data into args dict
     args= {'profile': userProfile, 'user': user, 'gatherings': gatherings}
 

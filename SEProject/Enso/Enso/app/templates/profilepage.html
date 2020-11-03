@@ -113,13 +113,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 text-center"><i class="fa fa-3x fa-trophy"></i></div>
+                            <!--<div class="col-md-12 text-center"><i class="fa fa-3x fa-trophy"></i></div>-->
+                            <div class="col-md-12 pt-2 text-center"><img class="img-responsive" style="width: auto; height: 50px;" src="https://www.flaticon.com/svg/static/icons/svg/3112/3112946.svg"></img></div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3" style=""><img class="img-fluid d-block rounded-circle"
-                            src="https://res.cloudinary.com/hgdcwue1c/image/upload/user-default-profile-pic.jpg">
+                            src="{{ user.profile.get_profile_url }}">
                         <div class="row justify-content-center py-3">
                             <div class="col-md-2 my-1" style=""><i class="fa fa-2x fa-qrcode"></i></div>
                             <div class="col-md-6" style="">
@@ -177,7 +178,7 @@
                                     {% for i in gatherings %}
                                     <h6 class="card-subtitle my-2 text-muted">{{i.name}}</h6>
                                     <p class="card-text float-left">@ {{i.get_foodstore.get_store_name}}, {{i.get_date}}</p>
-                                    <p class="card-text float-right"><i class="fas fa-star"></i> 4/5</p>
+                                    <p class="card-text float-right"><i class="fas fa-star"></i> {{i.get_foodstore.get_average_rating}}/5</p>
                                     <div class="clearfix"></div>
                                     {%if not forloop.last %}<hr class="mt-0"/>{%endif%}
                                     {% endfor %}
