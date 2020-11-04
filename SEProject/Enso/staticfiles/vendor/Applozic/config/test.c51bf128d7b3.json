@@ -1,0 +1,5 @@
+{
+  "port": 3002,
+  "baseUrl": "https://apps-test.applozic.com",
+  "applozicMinifiedFileUrl": "https://cdn-test.applozic.com/applozic/applozic.chat-6.1.min.js"
+}

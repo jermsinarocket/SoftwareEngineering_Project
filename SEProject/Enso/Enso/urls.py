@@ -14,4 +14,5 @@ urlpatterns = [
     #Loaders URLS
     path('store/',include(BASE_URL_CONTROLLER_DIR + 'store_manager_url')),
     path('gathering/',include(BASE_URL_CONTROLLER_DIR + 'gathering_manager_url')),
+    path('profile/',include(BASE_URL_CONTROLLER_DIR + 'profile_manager_url'))
 ]

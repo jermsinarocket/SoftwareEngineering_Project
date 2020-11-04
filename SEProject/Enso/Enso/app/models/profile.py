@@ -40,6 +40,9 @@ class Profile(models.Model):
     def get_profile_url(self):
         return getImageURL(self.profile_pic,'jpg')
 
+    def get_level_percent(self):
+        return round((self.points/self.current_level.max_points)*100)
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
