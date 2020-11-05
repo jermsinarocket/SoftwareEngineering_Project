@@ -22,8 +22,9 @@
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Customizable-Badges/jquery.badge.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Loading-Mask/app.min.css" %}">
     <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/an-skill-bar/an-skill-bar.css" %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+    <script src="{% static "vendor/an-skill-bar/an-skill-bar.js" %}"></script>
     <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
     <script src="{% static "vendor/Applozic/public/plugin/js/jquery.min.js" %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
@@ -257,11 +258,11 @@
                       <div class='card-body'>
                         <div class="row">
                           <div class="col-2">
-                            <img src='{{ review.user_profile.get_profile_url}}' style="border-radius:50%;width:70%"></img>
+                            <img src='{{ review.user_gathering.user_profile.get_profile_url}}' style="border-radius:50%;width:70%"></img>
                           </div>
                           <div class="col-2" style="margin-left:-30;">
                             <div class="row">
-                              <span class="fs-12 bold">{{review.user_profile.first_name}}</span>
+                              <span class="fs-12 bold">{{review.user_gathering.user_profile.first_name}}</span>
                             </div>
                             <div class="row">
                             {% for i in "12345" %}
@@ -277,7 +278,7 @@
                             </div>
                           </div>
                           <div class="col" style="margin-left:-45;margin-top:13;">
-                            <span class="fs-18" onclick="chat({{review.user_profile.id}})" style="cursor:pointer"><i class='pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm' data-content="Chat with {{review.user_profile.first_name}}"></i></span>
+                            <span class="fs-18" onclick="chat({{review.user_gathering_user_profile.id}})" style="cursor:pointer"><i class='pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm' data-content="Chat with {{review.user_gathering_user_profile.first_name}}"></i></span>
                           </div>
                         </div>
                         <div class="row">
@@ -469,14 +470,18 @@
 
       var manage_invites_container = document.getElementById("manage_invites_body")
       manage_invites_container.innerHTML = ""
-      var manage_invites_body_innerHTML = "<div class='ui three cards' style='margin:0'>"
+      var manage_invites_body_innerHTML = "<div class='ui four cards' style='margin:0'>"
 
       {% for rest_user in all_users %}
         if({{user.profile.id}} != {{rest_user.id}}){
           manage_invites_body_innerHTML +=  '<div class="card" id="manage-invites-{{rest_user.id}}" style="padding:10;margin-bottom:5">'  +
                                               '<div class="content">' +
-                                                '<img class="right floated mini ui image" src="{{rest_user.get_profile_url}}" style="cursor:pointer" onclick="chat({{rest_user.id}})">' +
-                                                '<div class="header bold">{{rest_user.first_name}}</div>'  +
+                                                '<div class="row"><img class="floated ui image" src="{{rest_user.get_profile_url}}" style="cursor:pointer;margin:auto;width:70;height:53;" onclick="chatIndiv({{rest_user.id}})"></div>' +
+                                                '<div class="header bold" style="text-align:center;margin-top:5;">{{rest_user.first_name}}</div>' +
+                                                  '<div class="skillbar">' +
+                                                    '<div class="filled" data-width="100%" style="background-color:#cf7aa4"></div>'+
+                                                    '<span class="title">Level {{rest_user.current_level.id}}</span>'+
+                                                  '</div>'+
                                                 '<div class="fs-12 description italic">Member since {{rest_user.get_date_joined}}</div>' +
                                               '</div>'  +
                                               '<div class="ui bottom attached button" id="invite-'+ gathering_id +'" onclick="inviteMember({{rest_user.id}});">'  +
@@ -487,7 +492,9 @@
       {% endfor %}
       manage_invites_body_innerHTML += '</div>'
       manage_invites_container.innerHTML += manage_invites_body_innerHTML;
-
+      $('.skillbar').skillbar({
+        speed: 4000
+      });
     })
 
     function inviteMember(member_id){

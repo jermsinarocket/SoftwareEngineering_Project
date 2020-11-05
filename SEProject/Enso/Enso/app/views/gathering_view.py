@@ -18,6 +18,9 @@ from Enso.app.models.food_store import FoodStore
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from Enso.app.controllers.logic.gathering_manager import  host_get_pending_requests_count,participant_get_pending_requests_count,participant_get_pending_invites_count
+from Enso.app.controllers.logic.level_system_manager import calculateLevel
+from Enso.app.controllers.logic.cloudinary import uploadFile
+
 import os
 import sys
 import datetime
@@ -131,3 +134,32 @@ def leave_gathering(request):
     chat_id = user_obj.gathering.chat_id
     user_obj.delete()
     return JsonResponse({'chat_id':user_obj.gathering.chat_id})
+
+@login_required
+@csrf_exempt
+def complete_gathering(request):
+    post_data = request.POST
+    confirmed_participants = post_data['confirmed_participants'].split(',')
+    absent_participants = post_data['absent_participants'].split(',')
+    print(absent_participants)
+    gathering_id = post_data['gathering_id']
+
+    for user_id in confirmed_participants:
+         user_gathering = UserGathering.objects.get(id = int(user_id))
+         calculateLevel(user_gathering.user_profile)
+
+    for user_id in absent_participants:
+        if(user_id != ''):
+            UserGathering.objects.get(id = int(user_id)).delete()
+
+    receipt_file_name = "receipt-" + str(gathering_id)
+    gathering_obj = Gathering.objects.get(id = gathering_id)
+    gathering_obj.receipt = receipt_file_name
+    gathering_obj.status = 'C'
+    gathering_obj.save()
+
+    UserGathering.objects.filter(Q(gathering_id = gathering_id) & (Q(status = 'R') | Q(status = 'I'))).delete()
+
+    uploadFile(request.FILES['file'],receipt_file_name)
+
+    return JsonResponse({'chat_id':gathering_obj.chat_id})

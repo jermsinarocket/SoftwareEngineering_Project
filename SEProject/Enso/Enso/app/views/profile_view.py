@@ -14,7 +14,7 @@ from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.food_preferences import FoodPreferences
 from Enso.app.models.zipcode import Zipcode
 from Enso.app.models.hawker_centre import HawkerCentre
-from Enso.app.controllers.logic.gathering_manager import  upcoming_gatherings,pending_complete_gatherings,get_reviews
+from Enso.app.controllers.logic.gathering_manager import  upcoming_gatherings,pending_complete_gatherings,get_reviews,completed_gatherings
 
 import os
 import sys
@@ -28,4 +28,5 @@ import cloudinary.api
 def profilepage(request):
     return render(request, 'profilepage.html',{"upcoming_gatherings":upcoming_gatherings(request.user),
                                               "pending_complete_gatherings": pending_complete_gatherings(request.user),
+                                              "completed_gatherings" : completed_gatherings(request.user),
                                               "reviews":get_reviews(request.user)})

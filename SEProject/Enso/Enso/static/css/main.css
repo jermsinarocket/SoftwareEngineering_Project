@@ -1,3 +1,23 @@
+.image-checkbox
+{
+    cursor: pointer;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 2px solid transparent;
+    outline: 0;
+}
+
+    .image-checkbox input[type="checkbox"]
+    {
+        display: none;
+    }
+
+.image-checkbox-checked
+{
+    border-color: green;
+}
+
 .profile-link:hover{
   color: #db2828!important;
 }

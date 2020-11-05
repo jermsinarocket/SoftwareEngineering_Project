@@ -22,12 +22,13 @@
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Customizable-Badges/jquery.badge.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Loading-Mask/app.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/an-skill-bar/an-skill-bar.css" %}">
-
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/imgcheckbox/animation.imgcheckbox.min.css" %}">
     <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static "vendor/an-skill-bar/an-skill-bar.js" %}"></script>
-    <!--<script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>-->
-    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+    <script src="{% static "vendor/imgcheckbox/jquery.imgcheckbox.min.js" %}"></script>
+    <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
+
     <script src="{% static "vendor/Applozic/public/plugin/js/jquery.min.js" %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyDDCVt_rTIk3xHjMY5OTtKb7TvEzPqOD4U"></script>
@@ -50,6 +51,10 @@
         $('.skillbar').skillbar({
           speed: 4000
         });
+        var target_id = 'upcoming_gatherings'
+        if(window.location.search.split('?')[1]){
+          target_id = window.location.search.split('?')[1]
+        }
 
         loadMainContentContainer('upcoming_gatherings')
       });
@@ -72,28 +77,318 @@
                                                     '<img src="{{user_gathering.gathering.food_store.get_storepic_url}}">' +
                                                   '</div>' +
                                                   '<div class="content">' +
-                                                    '<div class="header">{{user_gathering.gathering.name}}</div>' +
-                                                    '<div class="meta">' +
-                                                      '<span class="category">You are a <span class="bold">{{user_gathering.get_member_type_display}}</span></span>' +
-                                                    '</div>' +
+                                                    '<div class="row">' +
+                                                      '<div class="col-6">'+
+                                                        '<div class="header"><span class="fs-20">{{user_gathering.gathering.name}}</span><span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></div>' +
+                                                        '<div class="meta">' +
+                                                          '<span class="category">You are a <span class="bold">{{user_gathering.get_member_type_display}}</span></span>' +
+                                                        '</div>' +
+                                                      '</div>'
+
+            {% for member in user_gathering.gathering.user_gathering.all %}
+
+             if('{{member.status}}' === "J"){
+                main_content_container_innerHTML += "<div class='col-sm-1' >" +
+                                                        "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                      "</div>"
+             }
+             {% endfor %}
+
+             for (i = 0; i < {{user_gathering.gathering.getRemainingPax}}; i++) {
+                main_content_container_innerHTML +=   "<div class='col-sm-1'>" +
+                                                          "<img class='avatar-tooltip' data-content='Invite Someone!' src='https://bethanychurch.org.uk/wp-content/uploads/2018/09/profile-icon-png-black-6.png' style='width:45;border-radius:50%;border:2px solid grey;cursor:pointer;'></img>" +
+                                                        "</div>"
+
+              }
+
+            main_content_container_innerHTML +=       '</div>' +
                                                     '<div class="description">' +
-                                                      '<p></p>' +
+                                                      '<div class="row" style="margin-top:5;">' +
+                                                        '<div class="col">' +
+                                                          '<p class="card-text">Where?</p>' +
+                                                          '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                          '<p class="card-text bold" style="margin-top:-9">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                        '</div>' +
+                                                        '<div class="col">'+
+                                                          '<p class="card-text">When?</p>' +
+                                                          '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                        '</div>' +
+                                                      '</div>'+
+                                                      {% if user_gathering.member_type == 'H'%}
+                                                        "<div class='ui inverted green button' style='margin-top:8'onclick='window.location.href={% url 'gathering_page' %}'>Manage</div>" +
+                                                      {% endif %}
                                                     '</div>' +
                                                   '</div>' +
                                                 '</div>'
           {% endfor %}
 
           main_content_container.innerHTML += main_content_container_innerHTML
+          $('.avatar-tooltip').popup();
       }
 
       function pending_complete_gatherings(){
+        var main_content_container = document.getElementById("menu-content")
+        var main_content_container_innerHTML = ""
+        {% for user_gathering in pending_complete_gatherings %}
+          main_content_container_innerHTML += '<div class="row ui horizontal card" style="width:900">' +
+                                                '<div class="image">' +
+                                                    '<div class="ui red ribbon label">' +
+                                                      'Pending'+
+                                                    '</div>'+
+                                                  '<img src="{{user_gathering.gathering.food_store.get_storepic_url}}">' +
+                                                '</div>' +
+                                                '<div class="content">' +
+                                                  '<div class="row">' +
+                                                    '<div class="col-6">'+
+                                                      '<div class="header"><span class="fs-20">{{user_gathering.gathering.name}}</span><span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></div>' +
+                                                      '<div class="meta">' +
+                                                        '<span class="category">You are a <span class="bold">{{user_gathering.get_member_type_display}}</span></span>' +
+                                                      '</div>' +
+                                                    '</div>'
+
+          var host_id = 0;
+          {% for member in user_gathering.gathering.user_gathering.all %}
+
+           if('{{member.status}}' === "J"){
+              main_content_container_innerHTML += "<div class='col-sm-1' >" +
+                                                      "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                    "</div>"
+           }
+
+           if('{{member.member_type}}' === "H"){
+             host_id = {{member.user_profile.id}}
+           }
+           {% endfor %}
+
+          main_content_container_innerHTML +=     '</div>' +
+                                                  '<div class="description">' +
+                                                    '<div class="row" style="margin-top:5;">' +
+                                                      '<div class="col">' +
+                                                        '<p class="card-text">Where?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                        '<p class="card-text bold" style="margin-top:-9">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                      '</div>' +
+                                                      '<div class="col">'+
+                                                        '<p class="card-text">When?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                      '</div>' +
+                                                    '</div>'+
+                                                    {% if user_gathering.member_type == 'H'%}
+                                                      '<span class="ui inverted green button" data-toggle="modal" data-target="#manageCompletionModal" data-whichever="{{user_gathering.gathering.name}}" data-whatever="{{user_gathering.gathering.id}}" style="margin-top:8">Mark as Completed</span>' +
+                                                      {% else %}
+                                                      '<span class="ui inverted green button" onclick="sendMessage(this)" data-whatever="'+ host_id +'" data-whichever="{{user_gathering.gathering.name}}" style="margin-top:8">Remind Host</span>' +
+                                                    {% endif %}
+                                                  '</div>' +
+                                                '</div>' +
+                                              '</div>'
+        {% endfor %}
+
+        {% for user_gathering in completed_gatherings %}
+          main_content_container_innerHTML += '<div class="row ui horizontal card" style="width:900">' +
+                                                '<div class="image">' +
+                                                    '<div class="ui {% if user_gathering.rating %}green{% else %}orange {% endif %} ribbon label">' +
+                                                      {% if user_gathering.rating %}'Completed'{% else %}'To Review'{% endif %}+
+                                                    '</div>'+
+                                                  '<img src="{{user_gathering.gathering.food_store.get_storepic_url}}">' +
+                                                '</div>' +
+                                                '<div class="content">' +
+                                                  '<div class="row">' +
+                                                    '<div class="col-6">'+
+                                                      '<div class="header"><span class="fs-20">{{user_gathering.gathering.name}}</span><span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></span>'+
+                                                       '<a class="card-text fs-18" href="{{user_gathering.gathering.get_receipt_url}}" target="_blank" style="color:black;cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-receipt bx-border bx-tada-hover bx-sm"></i></a></div>' +
+                                                      '<div class="meta">' +
+                                                        '<span class="category">You are a <span class="bold">{{user_gathering.get_member_type_display}}</span></span>' +
+                                                      '</div>' +
+                                                    '</div>'
+
+            {% for member in user_gathering.gathering.user_gathering.all %}
+
+             if('{{member.status}}' === "J"){
+                main_content_container_innerHTML += "<div class='col-sm-1' >" +
+                                                        "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                      "</div>"
+             }
+             {% endfor %}
+
+          main_content_container_innerHTML +=     '</div>' +
+                                                  '<div class="description">' +
+                                                    '<div class="row" style="margin-top:5;">' +
+                                                      '<div class="col">' +
+                                                        '<p class="card-text">Where?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                        '<p class="card-text bold" style="margin-top:-9">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                      '</div>' +
+                                                      '<div class="col">'+
+                                                        '<p class="card-text">When?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                      '</div>' +
+                                                    '</div>' +
+
+                                                    {% if user_gathering.rating %}
+                                                       '<div class="row" style="margin-top:5;"><span class="fs-14 m-l-15">You Rated:&nbsp;</span> '+
+                                                      {% for i in "12345" %}
+                                                        {% if forloop.counter <= user_gathering.rating.rating %}
+                                                          "<i class='fa fa-star' style='color:#ffe108; font-size:16px'></i>" +
+                                                        {% else %}
+                                                          "<i class='fa fa-star' style='font-size:18px'></i>" +
+                                                        {% endif %}
+                                                      {% endfor %}
+                                                      '</div>' +
+                                                      {% else %}
+                                                      "<div class='ui inverted orange button' style='margin-top:8'onclick='markCompleted();'>Leave a Review</div>" +
+                                                    {% endif %}
+                                                 '</div>' +
+                                                '</div>' +
+                                              '</div>'
+
+
+        {% endfor %}
+
+        main_content_container.innerHTML += main_content_container_innerHTML
+        $('.avatar-tooltip').popup();
 
       }
 
-      function reivew(){
+      function review(){
 
       }
 
+      $(document).on('show.bs.modal','#manageCompletionModal', function (event) {
+        var button = $(event.relatedTarget)
+        var gathering_id = parseInt(button.data('whatever'))
+
+        var gathering_name = button.data('whichever')
+        var manage_completion_container = document.getElementById("manage_completion_body")
+        $("#manageCompletionModalLabel").text("Reviewing: " + gathering_name);
+        manage_completion_container.innerHTML = ""
+        var manage_completion_body_innerHTML = "<form class='ui form' id='manageSubmitForm'>" +
+                                                 "<div class='field'><label style='font-size:15;padding-left:15;'>Confirm Attendees<br><span id='confirmed_participants_error' class='italic dis-none' style='font-size:12;color:red'> Participants must be selected </span></label></div><div class='row'>"
+
+        {% for user_gathering in pending_complete_gatherings %}
+          if({{user_gathering.gathering.id}} === gathering_id){
+            {% for member in user_gathering.gathering.user_gathering.all %}
+            manage_completion_body_innerHTML += '<div class="col-sm-2" style="margin-left:10!important;"><label class="image-checkbox" style="border-radius:50%" title="{{member.user_profile.first_name}}">'  +
+                                                    '<img class="avatar-tooltip" data-content="{{member.user_profile.first_name}}" style="width:70;height:60;border-radius:50%" src="{{member.user_profile.get_profile_url}}" />'  +
+                                                    '<input type="checkbox" name="confirmed_participants" value="{{member.id}}" />'  +
+                                                '</label></div>'
+            {% endfor %}
+          }
+        {% endfor %}
+
+          manage_completion_body_innerHTML +=   '</div>' +
+                                                  '<div class="field" style="padding-top:5"><label style="font-size:15;padding-left:15">Upload Receipt<br><span id="receipt_file_error" class="italic dis-none" style="font-size:12;color:red"> Receipt is required</span></label></div>'  +
+                                                    '<div class="ui action input" style="padding-left:15">' +
+                                                    '<input type="text" placeholder="Receipt..." readonly>' +
+                                                    '<input id="receipt_upload" type="file" style="display:none">' +
+                                                    '<div class="ui icon button">' +
+                                                      '<i class="attach icon"></i>' +
+                                                    '</div>' +
+                                                  '</div>' +
+                                                  '<div class="row" style="padding-left:30;padding-top:20"><button class="ui primary button">Confirm</button></div>' +
+                                                  "</form>"
+
+
+        manage_completion_container.innerHTML = manage_completion_body_innerHTML
+        $('.avatar-tooltip').popup();
+
+        $("input:text").click(function() {
+            $(this).parent().find("input:file").click();
+          });
+
+          $('input:file', '.ui.action.input')
+            .on('change', function(e) {
+              var name = e.target.files[0].name;
+              $('input:text', $(e.target).parent()).val(name);
+            });
+
+        $(".image-checkbox").each(function () {
+            if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
+                $(this).addClass('image-checkbox-checked');
+            }
+            else {
+                $(this).removeClass('image-checkbox-checked');
+            }
+        });
+
+        // sync the state to the input
+        $(".image-checkbox").on("click", function (e) {
+            if ($(this).hasClass('image-checkbox-checked')) {
+                $(this).removeClass('image-checkbox-checked');
+                $(this).find('input[type="checkbox"]').first().removeAttr("checked");
+            }
+            else {
+                $(this).addClass('image-checkbox-checked');
+                $(this).find('input[type="checkbox"]').first().attr("checked", "checked");
+            }
+
+            e.preventDefault();
+        });
+
+        $(document).on('submit', '#manageSubmitForm',function(event){
+        		event.preventDefault()
+            var confirmed_participants = [];
+            var absent_participants = [];
+            $("input:checkbox[name=confirmed_participants]:checked").each(function(){
+                confirmed_participants.push($(this).val());
+                console.log(confirmed_participants)
+            });
+
+            $("input:checkbox[name=confirmed_participants]:not(:checked)").each(function(){
+                absent_participants.push($(this).val());
+            });
+            var formValid = true;
+            if(confirmed_participants.length == 0){
+              $('#confirmed_participants_error').removeClass("dis-none")
+              formValid = false;
+            }else{
+              $('#confirmed_participants_error').addClass("dis-none")
+            }
+
+            if ($('#receipt_upload').get(0).files.length === 0) {
+                $('#receipt_file_error').removeClass("dis-none")
+                formValid = false;
+            }else{
+                $('#receipt_file_error').addClass("dis-none")
+            }
+
+
+            if(formValid){
+              var data = new FormData($('#manageSubmitForm')[0])
+              data.append('confirmed_participants',confirmed_participants);
+              data.append('absent_participants',absent_participants);
+              data.append('file', $("input[type=file]").get(0).files[0]);
+              data.append('gathering_id',gathering_id );
+
+              $.ajax({
+                  type : "POST",
+                  url: '{% url "complete_gathering" %}',
+                  data : data,
+                  contentType: false,
+                  processData: false,
+                  success : function(json) {
+                      sendMessageCustom(json['chat_id'], "Thank you for attending the gathering!!!")
+                      Topper({
+                        title: '',
+                        text: 'Gathering has been completed!',
+                        style: 'success',
+                        type: 'top',
+                        autoclose: true,
+                        autocloseAfter: 3000
+                      });
+
+                      window.location.href = "?pending_complete_gatherings";
+                  },
+                  // handle a non-successful response
+                  error : function(xhr,errmsg,err) {
+                    console.log(errmsg)
+                  }
+            });
+            }
+
+        });
+
+
+      });
 
     </script>
   </head>
@@ -156,9 +451,9 @@
         <div class='col-9'>
           <div class="row" style='margin-left:10 !important;'>
             <div class="ui fluid three item menu" id="sub-menu">
-              <a id="upcoming_gatherings" class="item active" onclick="loadMainContentContainer('upcoming_gatherings');">Upcoming Gatherings&nbsp;<span class='bold'> ({{upcoming_gatherings|length}})</span></a>
-              <a id="pending_complete_gatherings" class="item" onclick="loadMainContentContainer('pending_complete_gatherings');">Completed Gatherings&nbsp;<span class='bold'> ({{pending_complete_gatherings|length}})</span></a>
-              <a id="reviews" class="item" onclick="loadMainContentContainer('reviews');" >To Review&nbsp;<span class='bold'> ({{reviews|length}})</a>
+              <a id="upcoming_gatherings" class="item active" onclick="loadMainContentContainer('upcoming_gatherings');">Upcoming Gatherings&nbsp;<span class='bold'> {% if upcoming_gatherings|length > 0 %}({{upcoming_gatherings|length}}){% endif %}</span></a>
+              <a id="pending_complete_gatherings" class="item" onclick="loadMainContentContainer('pending_complete_gatherings');">Completed Gatherings&nbsp;<span class='bold'>{% if pending_complete_gatherings|length > 0 %}({{pending_complete_gatherings|length}}){% endif %}</span></a>
+              <a id="reviews" class="item" onclick="loadMainContentContainer('reviews');" >To Review&nbsp;<span class='bold'>{% if reviews|length > 0 %}({{reviews|length}}){% endif %}</a>
             </div>
           </div>
           <div id="menu-content" class="container" style="margin-left:10 !important;margin-top:15 !important;">
@@ -167,6 +462,20 @@
       </div>
     </div>
     <span id="chat-unread-count" class="chat-launcher-icon" ></span>
+    <div class="modal fade" id="manageCompletionModal" tabindex="-1" role="dialog" aria-labelledby="manageCompletionModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:400;">
+          <div class="modal-header">
+            <h5 class="modal-title" style="margin:auto;" id="manageCompletionModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_completion_body">
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
 
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom')
@@ -232,8 +541,33 @@
     });
 
 
-    function chat(id){
+    function chatIndiv(id){
       $applozic.fn.applozic('loadTab', id);
+    }
+
+    function sendMessage(event){
+      var button = $(event)
+      $applozic.fn.applozic('sendMessage', {
+                  'to': parseInt(button.data('whatever')),           // userId of the receiver
+                  'message' : "Hello, please confirm the completion for " + button.data('whichever') + "!",
+                  'type' : 0                  //(optional) DEFAULT(0),
+                    });
+
+    }
+
+    function sendMessageCustom(groupID,message){
+      $applozic.fn.applozic('sendGroupMessage',
+          {'groupId' : groupID,
+         'clientGroupId' : groupID,
+         'message' : message
+         });
+
+    }
+
+
+
+    function chat(groupID){
+      $applozic.fn.applozic('loadGroupTab', groupID);
     }
     </script>
 

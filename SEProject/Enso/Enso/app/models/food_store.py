@@ -18,7 +18,6 @@ class FoodStore(models.Model):
     store_menu = models.TextField(null=True, blank=True)
     cuisine_type = models.ForeignKey(FoodCategory, null=True,blank=True, related_name='food_store',on_delete=models.CASCADE)
     cashless_payment = models.BooleanField(default=False)
-    store_rating = models.ManyToManyField('Profile', through='Rating', related_name='food_store')
 
     class Meta:
         app_label = "Enso"

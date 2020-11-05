@@ -154,9 +154,6 @@ EMAIL_HOST_PASSWORD = 'enso!password123'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 
-FIREBASE_CRED_PATH_URL = 'Enso/settings/firebase-cred.json'
-
-
 cloudinary.config(
   cloud_name = "hgdcwue1c",
   api_key = "926569871284251",

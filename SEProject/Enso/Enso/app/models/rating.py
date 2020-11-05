@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 
 class Rating(models.Model):
-    user_profile = models.ForeignKey('Profile', related_name='rating', on_delete=models.CASCADE, null=True)
+    user_gathering = models.OneToOneField('UserGathering', related_name='rating', on_delete=models.CASCADE, null=True)
     food_store  = models.ForeignKey('FoodStore', related_name='rating', on_delete=models.CASCADE, null=True)
     rating = models.IntegerField(default=1,null=False, blank=False)
     review = models.TextField(blank=True,null=True)

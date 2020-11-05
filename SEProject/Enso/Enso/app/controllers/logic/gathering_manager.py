@@ -29,10 +29,13 @@ def participant_get_pending_invites_count(user):
     return len(user_requests)
 
 def upcoming_gatherings(user):
-    return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J")) & (Q(gathering__date__gt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__gt=datetime.now().time().strftime("%X")))))
+    return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J")) & (Q(gathering__date__gt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__gt=datetime.now().time().strftime("%X"))))).order_by('gathering__date')
 
 def pending_complete_gatherings(user):
-    return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J") & Q(gathering__status = "P")) & (Q(gathering__date__lt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__lt=datetime.now().time().strftime("%X")))))
+    return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J") & Q(gathering__status = "P")) & (Q(gathering__date__lt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__lt=datetime.now().time().strftime("%X"))))).order_by('gathering__date')
+
+def completed_gatherings(user):
+    return UserGathering.objects.filter(Q(user_profile = user.profile) & Q(gathering__status = "C")).order_by('gathering__start_time')
 
 def get_reviews(user):
-    return UserGathering.objects.filter(Q(user_profile = user.profile) & Q(status="J") & Q(reviewed=False) & Q(gathering__status="C"))
+    return UserGathering.objects.filter(Q(user_profile = user.profile) & Q(status="J") & Q(rating__isnull = True) & Q(gathering__status="C"))

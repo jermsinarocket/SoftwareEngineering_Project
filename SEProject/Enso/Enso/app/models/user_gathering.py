@@ -18,12 +18,10 @@ TYPE = (
 )
 
 class UserGathering(models.Model):
-
     user_profile = models.ForeignKey('Profile', related_name='user_gathering', on_delete=models.CASCADE, null=True)
     gathering  = models.ForeignKey('Gathering', related_name='user_gathering', on_delete=models.CASCADE, null=True)
     member_type =  models.CharField(max_length=1,choices= TYPE,default='M')
     status =  models.CharField(max_length=1,choices= STATUS,default='J')
-    reviewed = models.BooleanField(default=False)
 
     class Meta:
         app_label = "Enso"

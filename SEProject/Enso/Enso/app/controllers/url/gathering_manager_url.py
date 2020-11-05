@@ -11,7 +11,9 @@ urlpatterns = [
     path('delete/member',gathering_view.remove_member,name='remove_member'),
     path('delete/joined-member',gathering_view.leave_gathering,name='leave_gathering'),
     path('update/pax',gathering_view.update_pax,name='update_pax'),
+    path('update/complete-gathering',gathering_view.complete_gathering,name='complete_gathering'),
     path('invite/member',gathering_view.invite_member,name='invite_member'),
     path('cancel/member',gathering_view.cancel_member,name='cancel_member'),
     path('approve/member',gathering_view.approve_member,name='approve_member'),
+
 ]

@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime,date
+from Enso.app.controllers.logic.cloudinary import getImageURL
 
 STATUS = (
   ('P', _("Pending")),
@@ -22,6 +23,7 @@ class Gathering(models.Model):
     no_pax = models.IntegerField(null=True,blank=True)
     chat_id = models.TextField(null=True,blank=True)
     status = models.CharField(max_length=1,choices= STATUS,default='P')
+    receipt = models.TextField(default="receipt-default-pic", null=True, blank=True)
 
     class Meta:
         app_label = "Enso"
@@ -43,3 +45,6 @@ class Gathering(models.Model):
 
     def getPendingRequests(self):
         return self.getPendingSelected("R")
+
+    def get_receipt_url(self):
+        return getImageURL(self.receipt,'jpg')
