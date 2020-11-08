@@ -24,8 +24,11 @@
     <link rel="stylesheet" type="text/css" href="{% static "vendor/an-skill-bar/an-skill-bar.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/imgcheckbox/animation.imgcheckbox.min.css" %}">
     <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/validate-password-requirements/jquery.passwordRequirements.css" %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static "vendor/an-skill-bar/an-skill-bar.js" %}"></script>
+    <script src="{% static "vendor/validate-password-requirements/jquery.passwordRequirements.js" %}"></script>
+    <script src="{% static "vendor/rater/rater.min.js" %}"></script>
     <script src="{% static "vendor/imgcheckbox/jquery.imgcheckbox.min.js" %}"></script>
     <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
 
@@ -38,7 +41,6 @@
     <script src="{% static "vendor/topper/topper.js" %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
-
     <script src="{% static "vendor/Customizable-Badges/jquery.badge.js" %}"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
@@ -56,7 +58,15 @@
           target_id = window.location.search.split('?')[1]
         }
 
-        loadMainContentContainer('upcoming_gatherings')
+        loadMainContentContainer(target_id)
+        $(".pr-password").passwordRequirements({
+          numCharacters: 8,
+          useLowercase: true,
+          useUppercase: true,
+          useNumbers: true,
+          useSpecial: true
+        });
+
       });
 
       function loadMainContentContainer(target_id){
@@ -235,7 +245,7 @@
                                                       {% endfor %}
                                                       '</div>' +
                                                       {% else %}
-                                                      "<div class='ui inverted orange button' style='margin-top:8'onclick='markCompleted();'>Leave a Review</div>" +
+                                                      '<div class="ui inverted orange button" style="margin-top:8" data-toggle="modal" data-target="#manageReviewModal" data-whichever="{{user_gathering.gathering.food_store.id}}" data-whenever="{{user_gathering.gathering.food_store.store_name}}" data-whatever="{{user_gathering.id}}">Leave a Review</div>' +
                                                     {% endif %}
                                                  '</div>' +
                                                 '</div>' +
@@ -249,9 +259,121 @@
 
       }
 
-      function review(){
+      function reviews(){
+        var main_content_container = document.getElementById("menu-content")
+        var main_content_container_innerHTML = ""
+        {% for user_gathering in reviews %}
+          main_content_container_innerHTML += '<div class="row ui horizontal card" style="width:900">' +
+                                                '<div class="image">' +
+                                                    '<div class="ui orange ribbon label">' +
+                                                    'To Review'+
+                                                    '</div>'+
+                                                  '<img src="{{user_gathering.gathering.food_store.get_storepic_url}}">' +
+                                                '</div>' +
+                                                '<div class="content">' +
+                                                  '<div class="row">' +
+                                                    '<div class="col-6">'+
+                                                      '<div class="header"><span class="fs-20">{{user_gathering.gathering.name}}</span><span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-chat bx-border bx-tada-hover bx-sm"></i></span>'+
+                                                       '<a class="card-text fs-18" href="{{user_gathering.gathering.get_receipt_url}}" target="_blank" style="color:black;cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-receipt bx-border bx-tada-hover bx-sm"></i></a></div>' +
+                                                      '<div class="meta">' +
+                                                        '<span class="category">You are a <span class="bold">{{user_gathering.get_member_type_display}}</span></span>' +
+                                                      '</div>' +
+                                                    '</div>'
 
+            {% for member in user_gathering.gathering.user_gathering.all %}
+
+             if('{{member.status}}' === "J"){
+                main_content_container_innerHTML += "<div class='col-sm-1' >" +
+                                                        "<img class='avatar-tooltip' data-content='{{member.user_profile.first_name}} ({{member.get_member_type_display}})' src='{{member.user_profile.get_profile_url}}' style='width:45;border-radius:50%;border:2px solid green;cursor:pointer;' onclick='chatIndiv({{member.user_profile.id}})'></img>" +
+                                                      "</div>"
+             }
+             {% endfor %}
+
+          main_content_container_innerHTML +=     '</div>' +
+                                                  '<div class="description">' +
+                                                    '<div class="row" style="margin-top:5;">' +
+                                                      '<div class="col">' +
+                                                        '<p class="card-text">Where?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.food_store.store_name}} </p>'+
+                                                        '<p class="card-text bold" style="margin-top:-9">#{{user_gathering.gathering.food_store.unit_number}},&nbsp;{{user_gathering.gathering.food_store.hawker_centre.zip_code.address}} </p>'+
+                                                      '</div>' +
+                                                      '<div class="col">'+
+                                                        '<p class="card-text">When?</p>' +
+                                                        '<p class="card-text bold" style="margin-top:-8">{{user_gathering.gathering.date}}, {{user_gathering.gathering.start_time}}</p>'+
+                                                      '</div>' +
+                                                    '</div>' +
+                                                    '<div class="ui inverted orange button" style="margin-top:8" data-toggle="modal" data-target="#manageReviewModal" data-whichever="{{user_gathering.gathering.food_store.id}}" data-whenever="{{user_gathering.gathering.food_store.store_name}}" data-whatever="{{user_gathering.id}}">Leave a Review</div>' +
+                                                 '</div>' +
+                                                '</div>' +
+                                              '</div>'
+        {% endfor %}
+
+
+      main_content_container.innerHTML += main_content_container_innerHTML
+      $('.avatar-tooltip').popup();
       }
+
+      $(document).on('show.bs.modal','#manageReviewModal', function (event) {
+        var button = $(event.relatedTarget)
+        var user_gathering_id = parseInt(button.data('whatever'))
+        var store_name = button.data('whenever')
+        var foodstore_id = parseInt(button.data('whichever'))
+
+        var manage_review_container = document.getElementById("manage_review_body")
+        $("#manageReviewModalLabel").text("How was your experience at " + store_name + "?");
+
+            var manage_review_body_innerHTML = "<form class='container ui form' id='manageReviewForm'>" +
+                                                  "<div class='field' style='text-align:center'><label style='font-size:15'>Give a Rating</label></div>" +
+                                                  "<div class='row justify-content-center' style='margin-top:-15'><div class='rating' data-rate-value=3 style='width:146px;height:47;font-size:35'></div></div>" +
+                                                  "<div class='row field justify-content-center' style='text-align:center;margin-top:5'><label style='font-size:15'>Leave a Review</label></div>" +
+                                                    "<div class='field'>" +
+                                                     "<textarea id='reviewText' rows='2' style='1px solid rgba(34,36,38,.15)' required></textarea>" +
+                                                   "</div>" +
+                                                  '<div class="row justify-content-center" style="padding-top:10"><button class="ui primary button">Submit Review</button></div>' +
+                                               '</form>'
+
+
+        manage_review_container.innerHTML = manage_review_body_innerHTML
+
+        var options = {
+            max_value: 5,
+            initial_value: 3,
+            additional_data: {'user_gathering_id':user_gathering_id,'foodstore_id':foodstore_id},
+            step_size: 1,
+        }
+
+        $(".rating").rate(options);
+      });
+
+      $(document).on('submit', '#manageReviewForm',function(event){
+        event.preventDefault();
+        var data = $(".rating").rate("getAdditionalData")
+        data['rating'] =  $(".rating").rate('getValue')
+        data['review'] = $('textarea').val()
+
+        $.ajax({
+            type : "POST",
+            url: '{% url "create_review" %}',
+            data : data,
+            success : function(json) {
+                Topper({
+                  title: '',
+                  text: 'Review has been submitted!',
+                  style: 'success',
+                  type: 'top',
+                  autoclose: true,
+                  autocloseAfter: 3000
+                });
+
+                window.location.href = "?pending_complete_gatherings";
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+              console.log(errmsg)
+            }
+      });
+
+      });
 
       $(document).on('show.bs.modal','#manageCompletionModal', function (event) {
         var button = $(event.relatedTarget)
@@ -434,7 +556,8 @@
                 </div>
                 <div class="content">
                   <span class="header">{{user.profile.first_name}}
-                    <span class="card-text fs-18 " onclick="chat({{user_gathering.gathering.chat_id}})" style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm" data-content="Edit Profile"></i></span>
+                    <span class="card-text fs-18" data-toggle="modal" data-target="#editProfileModal"style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm" data-content="Edit Profile"></i></span>
+                    <span class="card-text fs-18" data-toggle="modal" data-target="#changePasswordModal"style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip fa fa-unlock-alt bx-border bx-tada-hover bx-sm" data-content="Change Password"></i></span>
                   </span>
                   <div class="meta">
                     <span class="date">Member since {{user.profile.get_date_joined}}</span>
@@ -448,7 +571,7 @@
               </div>
             </div>
         </div>
-        <div class='col-9'>
+        <div class='col-9' style='margin-bottom:15px !important'>
           <div class="row" style='margin-left:10 !important;'>
             <div class="ui fluid three item menu" id="sub-menu">
               <a id="upcoming_gatherings" class="item active" onclick="loadMainContentContainer('upcoming_gatherings');">Upcoming Gatherings&nbsp;<span class='bold'> {% if upcoming_gatherings|length > 0 %}({{upcoming_gatherings|length}}){% endif %}</span></a>
@@ -476,10 +599,98 @@
         </div>
       </div>
     </div>
-    <script>
+    <div class="modal fade" id="manageReviewModal" tabindex="-1" role="dialog" aria-labelledby="manageReviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:450;">
+          <div class="modal-header">
+            <h5 class="modal-title" style="margin:auto;" id="manageReviewModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="manage_review_body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:450;">
+          <div class="modal-header">
+            <h5 class="modal-title" style="margin:auto;" id="changePasswordModalLabel">Change Password</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_password_form">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="change_password_body">
+            <div class="ui form" id="change_password_form">
+              <div class="ui error message" id="change_password_error">
+                <p>Passwords do not match</p>
+              </div>
+              <div class="field">
+                <label>New Password</label>
+                <input class="pr-password" id="change_password_first" type="password" required>
+              </div>
+              <div class="field">
+                <label>Re-enter Password</label>
+                <input type="password" id="change_password_second" required>
+              </div>
+              <div class="ui primary button" onclick="changePassword();">Change Password</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content" style="width:450;">
+          <div class="modal-header">
+            <h5 class="modal-title" style="margin:auto;" id="editProfileModalLabel">Edit Profile</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="edit_profile_form">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="edit_profile_body">
+            <div class="ui form">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <script>
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom')
 
+    function changePassword(){
+      if($('#change_password_first').val() != $('#change_password_second').val()){
+        $('#change_password_error').addClass('dis-block')
+      }else{
+        $('#change_password_error').removeClass('dis-block')
+
+        $.ajax({
+            type : "POST",
+            url: '{% url "change_password" %}',
+            data : {'password':$('#change_password_first').val()},
+            success : function(json) {
+                Topper({
+                  title: '',
+                  text: 'Password has been successfully changed!',
+                  style: 'success',
+                  type: 'top',
+                  autoclose: true,
+                  autocloseAfter: 3000
+                });
+
+                $('#close_password_form').trigger('click')
+
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+              console.log(errmsg)
+            }
+      });
+      }
+    }
     </script>
 
     <script src="{% static "vendor/Applozic/public/plugin/js/app/modules/applozic.jquery.js" %}"></script>

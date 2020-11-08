@@ -10,26 +10,29 @@ import os
 import sys
 
 
-def host_get_pending_requests_count(user,user_status):
-    hosted_gatherings = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='H')).values("gathering_id")
+def host_get_upcoming(user):
+    hosted_gatherings = filter_all_upcoming(UserGathering.objects.filter((Q(user_profile = user.profile) & Q(member_type='H'))))
     hosted_gatherings_id = []
 
-    for gathering in hosted_gatherings:
+    for gathering in hosted_gatherings.values("gathering_id"):
         hosted_gatherings_id.append(gathering['gathering_id'])
 
-    user_requests = UserGathering.objects.filter(Q(gathering_id__in=hosted_gatherings_id) & Q(member_type='M') & Q(status=user_status))
-    return len(user_requests)
+    user_requests = UserGathering.objects.filter(Q(gathering_id__in=hosted_gatherings_id) & Q(member_type='M') & (Q(status='I') | Q(status='R')))
+    return hosted_gatherings,len(user_requests)
 
-def participant_get_pending_requests_count(user):
-    user_requests = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="R"))
-    return len(user_requests)
+def participant_get_pending_requests(user):
+    user_requests = filter_all_upcoming(UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="R")))
+    return user_requests
 
-def participant_get_pending_invites_count(user):
-    user_requests = UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="I"))
-    return len(user_requests)
+def participant_get_pending_invites(user):
+    user_invites = filter_all_upcoming(UserGathering.objects.filter(Q(user_profile = user.profile) & Q(member_type='M') & Q(status="I")))
+    return user_invites
 
 def upcoming_gatherings(user):
-    return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J")) & (Q(gathering__date__gt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__gt=datetime.now().time().strftime("%X"))))).order_by('gathering__date')
+    return filter_all_upcoming(UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J")))).order_by('gathering__date')
+
+def participant_joined_gatherings(user):
+    return filter_all_upcoming(UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J") &Q(member_type='M')))).order_by('gathering__date')
 
 def pending_complete_gatherings(user):
     return UserGathering.objects.filter((Q(user_profile = user.profile) & Q(status="J") & Q(gathering__status = "P")) & (Q(gathering__date__lt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__lt=datetime.now().time().strftime("%X"))))).order_by('gathering__date')
@@ -39,3 +42,6 @@ def completed_gatherings(user):
 
 def get_reviews(user):
     return UserGathering.objects.filter(Q(user_profile = user.profile) & Q(status="J") & Q(rating__isnull = True) & Q(gathering__status="C"))
+
+def filter_all_upcoming(usergathering_obj):
+    return usergathering_obj.filter(Q(gathering__status = 'P') & (Q(gathering__date__gt=date.today()) | (Q(gathering__date=date.today()) & Q(gathering__start_time__gt=datetime.now().time().strftime("%X")))))

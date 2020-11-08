@@ -12,12 +12,13 @@ from django.core import serializers
 from django.http import JsonResponse,QueryDict
 from django.forms.models import model_to_dict
 from Enso.app.models.gathering import Gathering
+from Enso.app.models.rating import Rating
 from Enso.app.models.profile import Profile
 from Enso.app.models.user_gathering import UserGathering
 from Enso.app.models.food_store import FoodStore
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
-from Enso.app.controllers.logic.gathering_manager import  host_get_pending_requests_count,participant_get_pending_requests_count,participant_get_pending_invites_count
+from Enso.app.controllers.logic.gathering_manager import  host_get_upcoming,participant_get_pending_requests,participant_get_pending_invites,participant_joined_gatherings
 from Enso.app.controllers.logic.level_system_manager import calculateLevel
 from Enso.app.controllers.logic.cloudinary import uploadFile
 
@@ -28,9 +29,12 @@ import json
 
 @login_required
 def gathering_page(request):
-    return render(request,'gatheringpage.html',{"host_all_request":host_get_pending_requests_count(request.user,"I") + host_get_pending_requests_count(request.user,"R"),
-                                                "participant_pending_request": participant_get_pending_requests_count(request.user),
-                                                "participant_pending_invite": participant_get_pending_invites_count(request.user),
+    host_all_gatherings,host_all_requests = host_get_upcoming(request.user)
+    return render(request,'gatheringpage.html',{"host_all_request":host_all_requests,
+                                                "host_all_gatherings": host_all_gatherings,
+                                                "participant_joined_gatherings":participant_joined_gatherings(request.user),
+                                                "participant_pending_request": participant_get_pending_requests(request.user),
+                                                "participant_pending_invite": participant_get_pending_invites(request.user),
                                                 "all_users": Profile.objects.all()
                                                 }
                 )
@@ -146,7 +150,7 @@ def complete_gathering(request):
 
     for user_id in confirmed_participants:
          user_gathering = UserGathering.objects.get(id = int(user_id))
-         calculateLevel(user_gathering.user_profile)
+         calculateLevel(user_gathering.user_profile,30)
 
     for user_id in absent_participants:
         if(user_id != ''):
@@ -163,3 +167,16 @@ def complete_gathering(request):
     uploadFile(request.FILES['file'],receipt_file_name)
 
     return JsonResponse({'chat_id':gathering_obj.chat_id})
+
+
+@login_required
+@csrf_exempt
+def create_review(request):
+    post_data = request.POST
+    user_gathering_obj = UserGathering.objects.get(id=post_data['user_gathering_id'])
+    Rating.objects.create(user_gathering=user_gathering_obj,
+                          food_store=FoodStore.objects.get(id=post_data['foodstore_id']),
+                          rating=post_data['rating'],review=post_data['review'])
+    calculateLevel(user_gathering_obj.user_profile,10)
+
+    return JsonResponse({'success':True})

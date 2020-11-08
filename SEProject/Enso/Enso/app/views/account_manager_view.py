@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.food_preferences import FoodPreferences
 from Enso.app.controllers.logic.cloudinary import uploadFile
+from django.views.decorators.csrf import csrf_exempt
 
 import os
 import sys
@@ -126,6 +127,14 @@ def resetPassword(request):
         response['reset'] = False
 
     return JsonResponse(response)
+
+@login_required
+@csrf_exempt
+def change_password(request):
+    user = User.objects.get(id=request.user.id)
+    user.set_password(request.POST['password'])
+    user.save()
+    return JsonResponse({'success':True})
 
 @login_required
 def logout(request):

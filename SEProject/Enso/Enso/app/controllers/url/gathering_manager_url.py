@@ -7,6 +7,7 @@ urlpatterns = [
     path('load/existing-gatherings',gathering_view.load_existing_gatherings,name='load_existing_gatherings'),
     path('join/request-join',gathering_view.request_join_gathering,name='request_join_gathering'),
     path('create/new-chat',gathering_view.create_chat,name='create_chat'),
+    path('create/review',gathering_view.create_review,name='create_review'),
     path('delete/gathering',gathering_view.delete_gathering,name='delete_gathering'),
     path('delete/member',gathering_view.remove_member,name='remove_member'),
     path('delete/joined-member',gathering_view.leave_gathering,name='leave_gathering'),

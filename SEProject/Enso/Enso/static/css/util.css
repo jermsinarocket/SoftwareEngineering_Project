@@ -2283,7 +2283,7 @@
 */
 .vis-hidden {visibility: hidden;}
 .dis-none {display: none !important;}
-.dis-block {display: block;}
+.dis-block {display: block !important;}
 .dis-inline {display: inline;}
 .dis-inline-block {display: inline-block;}
 .dis-flex {
