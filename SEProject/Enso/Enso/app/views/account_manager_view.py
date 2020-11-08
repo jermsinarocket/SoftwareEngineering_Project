@@ -17,7 +17,7 @@ from django.db.models.query_utils import Q
 from django.core.mail import send_mail
 from Enso.app.models.food_category import FoodCategory
 from Enso.app.models.food_preferences import FoodPreferences
-from Enso.app.controllers.logic.cloudinary import uploadFile
+from Enso.app.controllers.logic.cloudinary import uploadFile,deleteFile
 from django.views.decorators.csrf import csrf_exempt
 
 import os
@@ -135,6 +135,23 @@ def change_password(request):
     user.set_password(request.POST['password'])
     user.save()
     return JsonResponse({'success':True})
+
+@login_required
+@csrf_exempt
+def update_profile(request):
+    post_data = request.POST
+    user = Profile.objects.get(user_id=request.user.id)
+    user.first_name = post_data['first_name']
+    user.last_name = post_data['last_name']
+    user.save()
+    if(len(request.FILES) != 0):
+        profile_pic_id = 'profile-pic-user_' + str(request.user.id)
+        deleteFile(profile_pic_id)
+        uploadFile(request.FILES['file'],profile_pic_id)
+
+
+    return JsonResponse({'success':True})
+
 
 @login_required
 def logout(request):

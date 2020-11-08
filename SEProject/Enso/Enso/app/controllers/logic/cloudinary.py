@@ -10,5 +10,8 @@ def getImageList(tagName):
         r = requests.get("http://res.cloudinary.com/hgdcwue1c/image/list/" + str(tagName) +".json")
         return r.json()['resources']
 
+def deleteFile(public_id):
+    cloudinary.uploader.destroy(public_id,invalidate=True)
+
 def uploadFile(file,publicID):
     cloudinary.uploader.upload(file, public_id = publicID)

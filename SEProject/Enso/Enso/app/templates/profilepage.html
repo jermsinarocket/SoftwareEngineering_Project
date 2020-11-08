@@ -23,11 +23,15 @@
     <link rel="stylesheet" type="text/css" href="{% static "vendor/Loading-Mask/app.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/an-skill-bar/an-skill-bar.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "vendor/imgcheckbox/animation.imgcheckbox.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "vendor/selectivity/selectivity.min.css" %}">
     <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="{% static "vendor/validate-password-requirements/jquery.passwordRequirements.css" %}">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "vendor/selectivity/selectivity-jquery.min.js" %}"></script>
     <script src="{% static "vendor/an-skill-bar/an-skill-bar.js" %}"></script>
     <script src="{% static "vendor/validate-password-requirements/jquery.passwordRequirements.js" %}"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="{% static "vendor/rater/rater.min.js" %}"></script>
     <script src="{% static "vendor/imgcheckbox/jquery.imgcheckbox.min.js" %}"></script>
     <script src="{% static "vendor/Semantic-UI/semantic.min.js" %}"></script>
@@ -57,6 +61,21 @@
         if(window.location.search.split('?')[1]){
           target_id = window.location.search.split('?')[1]
         }
+
+        var food_cats = []
+        var chosen_food_cats = []
+        {% for category in food_categories %}
+          food_cats.push({"id":{{category.id}}, "text":"{{category.category_name}}"})
+        {% endfor %}
+        {% for preferences in user.profile.food_preferences.all %}
+          chosen_food_cats.push({"id":{{preferences.food_category.id}}, "text":"{{preferences.food_category.category_name}}"})
+        {% endfor %}
+        console.log(chosen_food_cats)
+        $('#food-cat').selectivity({
+          items: food_cats,
+          inputType: 'Multiple',
+          data: chosen_food_cats
+        });
 
         loadMainContentContainer(target_id)
         $(".pr-password").passwordRequirements({
@@ -555,7 +574,7 @@
                   <img src="{{user.profile.get_profile_url}}">
                 </div>
                 <div class="content">
-                  <span class="header">{{user.profile.first_name}}
+                  <span class="header">{{user.profile.last_name}}&nbsp;{{user.profile.first_name}}
                     <span class="card-text fs-18" data-toggle="modal" data-target="#editProfileModal"style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip bx bxs-edit bx-border bx-tada-hover bx-sm" data-content="Edit Profile"></i></span>
                     <span class="card-text fs-18" data-toggle="modal" data-target="#changePasswordModal"style="cursor:pointer;padding-left:10;"><i class="pop-up-tooltip fa fa-unlock-alt bx-border bx-tada-hover bx-sm" data-content="Change Password"></i></span>
                   </span>
@@ -646,12 +665,64 @@
         <div class="modal-content" style="width:450;">
           <div class="modal-header">
             <h5 class="modal-title" style="margin:auto;" id="editProfileModalLabel">Edit Profile</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="edit_profile_form">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_edit_profile_form">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body" id="edit_profile_body">
             <div class="ui form">
+              <div class='row d-flex justify-content-center'>
+                <img id="previewImg" class="preview-img" src='{{user.profile.get_profile_url}}' onclick="changeImage()">
+                <input id="prof-pic-input" type="file" name="photo" onchange="previewFile(this);" class='file'>
+              </div>
+              <div class="fields justify-content-center text-center" style="margin-top:15">
+                <div class="field">
+                  <label>First name</label>
+                  <input id="first_name" type="text" placeholder="First Name" value="{{user.profile.first_name}}">
+                </div>
+                <div class="field">
+                  <label>Last Name</label>
+                  <input id="last_name" type="text" placeholder="Last Name" value="{{user.profile.last_name}}">
+                </div>
+              </div>
+              <div class="fields justify-content-center text-center">
+                <div class="disabled field">
+                  <label>Username</label>
+                  <input type="text" value="{{user.username}}">
+                </div>
+                <div class="field">
+                  <label>Email Address</label>
+                  <input type="email" placeholder="Email Address" value="{{user.email}}">
+                </div>
+              </div>
+              <div class="fields justify-content-center text-center">
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="text" placeholder="Phone Number" value="{{user.profile.phone_number}}">
+                </div>
+                <div class="field">
+                  <label>Postal Code</label>
+                  <input type="text" placeholder="Postal Code" value="{{user.profile.zip_code.zipcode}}">
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center text-center">
+              <div class="col-6">
+                <label style="display:block;margin:0 0 .28571429rem 0;color:rgba(0,0,0,.87);font-size:.92857143em;font-weight:700">Gender</label>
+                <input id="gender_toggle" type="checkbox" name="reg_gender" data-toggle="toggle" data-on=" <i class='fa fa-male'></i> M" data-off=" <i class='fa fa-female'></i> F" data-onstyle="primary" data-offstyle="danger">
+              </div>
+              <script>
+              {% if user.profile.gender == "Male" %}
+                $('#gender_toggle').attr('Checked','Checked')
+              {% endif %}
+              </script>
+              <div class="col-6" margin-left:"-10px;">
+                <label style="display:block;margin:0 0 .28571429rem 0;color:rgba(0,0,0,.87);font-size:.92857143em;font-weight:700">Cuisine Preferences</label>
+                <span id="food-cat" name="reg_food-categories" style="min-width: 170px; border-radius:3px;">
+              </div>
+            </div>
+            <div class="row justify-content-center text-center" style="margin-top:20;">
+              <div class="ui submit button" onclick="updateProfile();">Update Profile</div>
             </div>
           </div>
         </div>
@@ -660,6 +731,65 @@
 
     <script>
     $("#profile-pic-icon").badge({{user.profile.current_level.id}},'bottom')
+
+    function previewFile(input){
+    		var file = $("input[type=file]").get(0).files[0];
+
+    		if(file){
+    				var reader = new FileReader();
+
+    				reader.onload = function(){
+    						$("#previewImg").attr("src", reader.result);
+    				}
+
+    				reader.readAsDataURL(file);
+    		}
+    }
+
+    function changeImage(){
+    	$('#prof-pic-input').trigger("click")
+    }
+
+    function updateProfile(){
+        var foodCatData = $('#food-cat').selectivity('data')
+        var selectedFoodCatID = []
+        var first_name = $('#first_name').val();
+        if(foodCatData.length != 0){
+          for (foodCat of foodCatData) {
+              selectedFoodCatID.push(foodCat['id'])
+          }
+        }
+
+        var data = new FormData()
+        data.append('foodCat',selectedFoodCatID);
+        data.append('file', $("#prof-pic-input").get(0).files[0]);
+        data.append('first_name', $('#first_name').val());
+        data.append('last_name', $('#last_name').val());
+        $.ajax({
+            type : "POST",
+            url: '{% url "update_profile" %}',
+            data : data,
+            contentType: false,
+            processData: false,
+            success : function(json) {
+                Topper({
+                  title: '',
+                  text: 'Profile has been successfully updated!',
+                  style: 'success',
+                  type: 'top',
+                  autoclose: true,
+                  autocloseAfter: 5000
+                  });
+
+                  location.reload();
+
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+              console.log(errmsg)
+            }
+      });
+    }
 
     function changePassword(){
       if($('#change_password_first').val() != $('#change_password_second').val()){
